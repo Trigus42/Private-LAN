@@ -61,7 +61,7 @@ if [ $input = "Y" ]; then
 	mkdir /etc/dnscrypt-proxy -p
 	mv linux-$arc/* /etc/dnscrypt-proxy
 
-	printf "Configureing...\n"
+	printf "Configuring...\n"
 	cp /etc/dnscrypt-proxy/example-dnscrypt-proxy.toml /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 	sed -i "s/listen_addresses = \['127\.0\.0\.1:53']/listen_addresses = ['127.0.0.1:5300', '[::1]:5300']/gm" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 	printf "DNSCrypt-Proxy now listening at port 5300\n"
@@ -77,7 +77,7 @@ printf "Install PiHole? (Y/n) "
 read input
 if [ $input = "Y" ]; then
 	curl -sSL https://install.pi-hole.net | bash
-	printf "\nConfigureing PiHole to use DNSCrypt-Proxy...\n"
+	printf "\nConfiguring PiHole to use DNSCrypt-Proxy...\n"
 	echo "proxy-dnssec" >> /etc/dnsmasq.d/dnscrypt.conf
 	sed -i "s/^PIHOLE_DNS_1=.*/PIHOLE_DNS_1=127.0.0.1#5300/gm" /etc/pihole/setupVars.conf
 	sed -i "s/^PIHOLE_DNS_2=.*/PIHOLE_DNS_2=::1#5300/gm" /etc/pihole/setupVars.conf
@@ -173,4 +173,4 @@ if [ $input = "Y" ]; then
 	fi
 fi
 printf "\nDone.\n"
-echo "For more advanced configuration: https://discourse.pi-hole.net/t/openvpn-gateway-with-pihole-and-dnscrypt/26367/"´
+echo "For more advanced configuration visit: https://discourse.pi-hole.net/t/openvpn-gateway-with-pihole-and-dnscrypt/26367/"´
