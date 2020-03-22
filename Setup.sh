@@ -1,4 +1,5 @@
 #!/bin/bash
+
 printf "Update? (Y/n) "
 read input
 if [ $input = "Y" ]; then
@@ -63,6 +64,7 @@ if [ $input = "Y" ]; then
 	printf "Configureing...\n"
 	cp /etc/dnscrypt-proxy/example-dnscrypt-proxy.toml /etc/dnscrypt-proxy/dnscrypt-proxy.toml
 	sed -i "s/listen_addresses = \['127\.0\.0\.1:53']/listen_addresses = ['127.0.0.1:5300', '[::1]:5300']/gm" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+	printf "DNSCrypt-Proxy now listening at port 5300\n"
 
 	printf "Installing the service...\n"
 	/etc/dnscrypt-proxy/dnscrypt-proxy -service install
@@ -75,6 +77,7 @@ printf "Install PiHole? (Y/n) "
 read input
 if [ $input = "Y" ]; then
 	curl -sSL https://install.pi-hole.net | bash
+	printf "\nConfigureing PiHole to use DNSCrypt-Proxy...\n"
 	echo "proxy-dnssec" >> /etc/dnsmasq.d/dnscrypt.conf
 	sed -i "s/^PIHOLE_DNS_1=.*/PIHOLE_DNS_1=127.0.0.1#5300/gm" /etc/pihole/setupVars.conf
 	sed -i "s/^PIHOLE_DNS_2=.*/PIHOLE_DNS_2=::1#5300/gm" /etc/pihole/setupVars.conf
@@ -96,9 +99,15 @@ if [ $input = "Y" ]; then
 	done
 	config_file="/etc/openvpn/$(basename "$input").conf"
 	cp $input $config_file
+
+	sed -i -E 's/^.*resolv-retry infinite.*$//gm;t;d' $config_file
+	printf "\nresolv-retry infinite" >> $config_file
+
+	sed -i -E 's/^.*keepalive.*$//gm;t;d' $config_file
+	printf "\nkeepalive 10 60" >> $config_file
 	
-	sed -i "s/^auth-user-pass//gm" $config_file
-	printf "auth-user-pass /etc/openvpn/credentials.dat" >> $config_file
+	sed -i -E 's/^.*auth-user-pass.*$//gm;t;d' $config_file
+	printf "\nauth-user-pass /etc/openvpn/credentials.dat" >> $config_file
 	
 	touch /etc/openvpn/credentials.dat
 	chown root:root /etc/openvpn/credentials.dat
