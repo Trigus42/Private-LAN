@@ -4,7 +4,7 @@ finished ()
 {
     printf "\n" >> /var/log/gateway_log
     rm /tmp/gateway_keepalive.lock
-    if $1; then exit 0; else finished false; fi
+    if $1; then exit 0; else exit 1; fi
 }
 
 connection_test ()
