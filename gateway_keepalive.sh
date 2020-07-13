@@ -97,6 +97,7 @@ if [ ! -f /tmp/gateway_keepalive.lock ] || (( ($(date +%s) - $(< /tmp/gateway_ke
         fi
         if ping google.com -c 1 || ping pool.ntp.org -c 1; then
             echo "$(date +"%x %X") Success. Internet connection restored" >> /var/log/gateway_log
+            if [ -f /tmp/gateway_failure ]; then rm /tmp/gateway_failure; fi
             finished true
         else
             if [ ! -f /tmp/gateway_failure ]; then
