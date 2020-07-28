@@ -410,7 +410,7 @@ dhcp-host=81:7d:22:a2:3e:7e,192.168.0.10,Computer,set:Direct
 ### **Set up a simple firewall:**
 
 Thanks to iptables-persistent, editing the configuration is simple.  
-Depending on the configuaration you edit (rules.v4/rules.v6) you just need to adapt to the correct IP format (IPv4/IPv6) when it comes to your LAN IP range.
+Depending on the configuration you edit (rules.v4/rules.v6) you just need to use the correct IP format (IPv4/IPv6) when it comes to your LAN IP range.
 
 /etc/iptables/rules.v*:
 ```xml
