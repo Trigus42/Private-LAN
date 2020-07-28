@@ -3,8 +3,6 @@
 *The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests and a VPN gateway.  
 I assume that all commands are executed as root and Raspbian Buster or Bullseye is used as operating system.*
 
----
-
 ## Install DNSCrypt-Proxy:   
 
 ### **Download and extract DNSCrypt-Proxy:**  
@@ -77,8 +75,6 @@ Resolver IP:    45.87.212.50
 ### **Start the service on boot:**  
     systemctl enable dnscrypt-proxy
 
----
-
 ## Setup the VPN gateway:
 
 ### **Edit kernel parameters to enable IP forwarding and enchance security:**  
@@ -122,8 +118,6 @@ Load these changes:
 [ICMP redirects](https://askubuntu.com/questions/118273/what-are-icmp-redirects-and-should-they-be-blocked)  
 [Source packet routing](https://www.ccexpert.us/basic-security-services/disable-ip-source-routing.html)  
 [SYN attacks](https://www.symantec.com/connect/articles/hardening-tcpip-stack-syn-attacks)*
-
-<br />
 
 <details>
 <summary>Setup OpenVPN</summary>
@@ -242,8 +236,6 @@ ip6tables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
 Your public IP should now differ from your previous one.
 </details>
 
-<br />
-
 ### **Save this configuration:**  
 Install 'iptables-persistent'
 
@@ -253,8 +245,6 @@ Save the current iptables configuration (In case you didn't already do it during
 
     iptables-save > /etc/iptables/rules.v4
     iptables-save > /etc/iptables/rules.v6 ## If your VPN service supports IPv6
-
----
 
 ## Install Pi-Hole:  
 > Our code is completely open, but piping to bash can be dangerous. For a safer install, review the code and then run the installer locally.
@@ -292,11 +282,8 @@ In the Pi-Hole web interface:
   If DNSSEC is activated in DNSCrypt-Proxy:
 - Settings &rightarrow; DNS &rightarrow; Use DNSSEC: Checked &rightarrow; Save  
 
-<br />
+---
 
----
----
-<br />
 
 # Optional settings
 
@@ -310,8 +297,6 @@ Once the server is set up you shouldn't have to worry about security updates.
 apt install unattended-upgrades apt-listchanges
 dpkg-reconfigure -plow unattended-upgrades
 ```
-
----
 
 ## [dnsmasq:](http://www.thekelleys.org.uk/dnsmasq/docs/dnsmasq-man.html)
 
@@ -387,8 +372,6 @@ dhcp-host=81:7d:22:a2:3e:7e,192.168.0.100,Computer
 </details>
 </details>
 
-<br />
-
 <details>
 <summary>Using tags only</summary>
 
@@ -418,9 +401,6 @@ dhcp-host=81:7d:22:a2:3e:7e,192.168.0.10,Computer,set:Direct
 ```
 </details>
 </details>
-<br>
-
----
 
 ## [iptables:](https://linux.die.net/man/8/iptables)
 **Important:**  
