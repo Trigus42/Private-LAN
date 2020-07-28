@@ -465,7 +465,7 @@ INPUT:
 - Allow packets of self-established connections or connections related to those
 - Allow pings
 - Allow DHCP packets
-- Pass packets comming from your LAN IP range to the "TRUSTED_IP" chain
+- Pass packets coming from your LAN IP range to the "TRUSTED_IP" chain
   
 TRUSTED_IP:
 - Allow packets of incoming DNS requests (UDP)
@@ -497,7 +497,7 @@ This rule blocks the devices internet connection over the RPi.
 
     -A FORWARD -m mac --mac-source <MAC> -j REJECT
 
-Of course if you use static IP's you could also specify the device by its IP:
+Of course if you use static IP you could also specify the device by its IP:
 
     -A INPUT -s <IP> -j REJECT
 
@@ -509,7 +509,7 @@ This rule blocks a request between 22:00 and 06:00, Sunday to Thursday:
     -A INPUT -m time --timestart 22:00 --timestop 06:00 --weekdays Sun,Mon,Tue,Wed,Thu -j REJECT
 
 
-If you want whole rulesets to change, you could also load them via cron.  
+If you want whole rule sets to change, you could also load them via cron.  
 Sample configuration for /etc/cron.d/iptables:
 ```
 00 00 * * * root /usr/sbin/iptables-restore /etc/iptables/rules.v4
