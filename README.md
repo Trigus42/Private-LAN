@@ -544,7 +544,7 @@ This rule discards all UDP DNS requests other than "wikipedia.com":
 
     -A INPUT -p upd --dport 53 -m string ! --string "wikipedia.com" --algo bm -j DROP
 
-It is also possible to filter using Regex. To do this, you must first [install kpcre](https://github.com/smcho-kr/kpcre/wiki/Step-by-step-installation-guide).  
+It is also possible to filter using Regex. To do this, you must first [install DKMS](https://github.com/smcho-kr/kpcre/wiki/Step-by-step-installation-guide).  
 However the algorithm for regex matching is much more complex than the Boyer-Moore algorithm. The rule should therefore be as precise as possible so that the regex matching can be skipped for non-applicable packets.
 
 This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*". The syntax of the string is "/[<*REGEX*>](https://regex101.com/)/".
