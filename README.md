@@ -277,10 +277,10 @@ server=::1#5300
 ```
 
 In the Pi-Hole web interface:
-- Settings &rightarrow; DHCP &rightarrow; Router (gateway) IP address: IP of the RPi (eth0) &rightarrow; Save
+- Settings &rightarrow; DHCP &rightarrow; DHCP server enabled:heavy_check_mark: | Router (gateway) IP address: <IP of the RPi (eth0)> &rightarrow; Save
 
   If DNSSEC is activated in DNSCrypt-Proxy:
-- Settings &rightarrow; DNS &rightarrow; Use DNSSEC: Checked &rightarrow; Save  
+- Settings &rightarrow; DNS &rightarrow; Use DNSSEC:heavy_check_mark: &rightarrow; Save  
 
 ---
 
