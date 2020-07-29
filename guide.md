@@ -1,4 +1,4 @@
-# OpenVPN Gateway with PiHole and DNSCrypt
+# VPN Gateway with PiHole and DNSCrypt
 
 *The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests and a VPN gateway.  
 I assume that all commands are executed as root, Raspbian Buster or Bullseye is used as operating system and your network interface is named "eth0". If you wan't to use you WiFi network card or another Ethernet interface just replace "eth0" by it's name everywhere.*
