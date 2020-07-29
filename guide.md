@@ -1,7 +1,41 @@
 # OpenVPN Gateway with PiHole and DNSCrypt
 
 *The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests and a VPN gateway.  
-I assume that all commands are executed as root and Raspbian Buster or Bullseye is used as operating system.*
+I assume that all commands are executed as root, Raspbian Buster or Bullseye is used as operating system and your network interface is named "eth0". If you wan't to use you WiFi network card or another Ethernet interface just replace "eth0" by it's name everywhere.*
+
+## General:
+
+### Interface names:
+With **Bullseye** we've got "predictable" interface names. But those are just hampering for our purposes.  
+To assign static interface names you have to create this file:
+ ```xml
+ #/etc/systemd/network/10-persistent-net.link
+ [Match]
+ MACAddress=<MAC>
+
+ [Link]
+ Name=<Custom name>
+ ```
+ <details>
+<summary>Example</summary>
+    
+ ```xml
+ [Match]
+ MACAddress=01:23:45:67:89:ab
+
+ [Link]
+ Name=eth0
+ ```
+ </details>
+ 
+ ### Unstable Repos
+ If you want to use Wireguard on **Buster** you have to add the "Debian Unstable" repository to your apt sources first:
+ ```
+echo "deb http://deb.debian.org/debian/ unstable main" >> /etc/apt/sources.list.d/unstable.list
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 
+printf 'Package: *\nPin: release a=unstable\nPin-Priority: 150\n' >> /etc/apt/preferences.d/limit-unstable
+apt update
+```
 
 ## Install DNSCrypt-Proxy:   
 
@@ -21,7 +55,7 @@ rm dnscrypt-proxy-linux_arm-*.tar.gz
 cd /etc/dnscrypt-proxy
 cp example-dnscrypt-proxy.toml dnscrypt-proxy.toml
 ```
-In dnscrypt-proxy.toml:
+Change in dnscrypt-proxy.toml:
 ```yaml
 ## Pi-Hole already uses Port 53
 listen_addresses = ['127.0.0.1:5300', '[::1]:5300'] 
@@ -187,17 +221,6 @@ Your public IP should now differ from your previous one.
 <summary>Setup Wireguard</summary>
 
 ### **Install Wireguard:**
-
-<details>
-<summary>Additional steps for Buster</summary>
-
-```
-echo "deb http://deb.debian.org/debian/ unstable main" >> /etc/apt/sources.list.d/unstable.list
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 
-printf 'Package: *\nPin: release a=unstable\nPin-Priority: 150\n' >> /etc/apt/preferences.d/limit-unstable
-apt update
-```
-</details>
 
     apt install wireguard
 
