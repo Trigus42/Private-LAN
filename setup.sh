@@ -92,18 +92,18 @@ fi
 
 printf "Install OpenVPN or Wireguard Gateway? (O/W) > "
 read VPN
-if ! [ -z "$VPN"]; then
+if ! [ -z "$VPN" ]; then
 	if [ $VPN = "O" ]; then
 		iface="tun0"
 		printf "Installing OpenVPN...\n"
 		apt-get install openvpn -y >> /dev/null
 		
-		printf "Type in the full path of your OpenVPN config file: "
+		printf "Type in the full path of your OpenVPN config file > "
 		$input = ""
 		while [ ! -e $input ]; do
 			read input
 			if [ ! -e $input ]; then
-				printf "File could not be found! Try angain: \n"
+				printf "File could not be found! Try angain > "
 			fi
 		done
 		config_file="/etc/openvpn/$(basename "$input").conf"
@@ -145,12 +145,12 @@ if ! [ -z "$VPN"]; then
 
 		apt-get install openvpn -y >> /dev/null
 		
-		printf "Type in the full path of your Wireguard config file: "
+		printf "Type in the full path of your Wireguard config file > "
 		$input = ""
 		while [ ! -e $input ]; do
 			read input
 			if [ ! -e $input ]; then
-				printf "File could not be found! Try angain: \n"
+				printf "File could not be found! Try angain: > "
 			fi
 		done
 		cp $input /etc/wireguard/wg0.conf
@@ -163,7 +163,7 @@ if ! [ -z "$VPN"]; then
 	fi
 
 	printf "\nConfiguring networking stack...\n"
-	printf "Does your VPN Service Support IPv6? (Y/n)"
+	printf "Does your VPN Service Support IPv6? (Y/n) > "
 	read ipv6_support
 	printf "#IP Forwarding\nnet.ipv4.ip_forward = 1" > /etc/sysctl.conf
 	if [ $ipv6_support = "Y" ]; then
@@ -189,7 +189,7 @@ net.ipv6.conf.default.accept_source_route = 0
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_max_syn_backlog = 2048
 net.ipv4.tcp_synack_retries = 2
-net.ipv4.tcp_syn_retries = 5' > /etc/sysctl.conf
+net.ipv4.tcp_syn_retries = 5' >> /etc/sysctl.conf
 
 	sysctl -p /etc/sysctl.conf
 
