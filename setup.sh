@@ -189,7 +189,7 @@ net.ipv6.conf.default.accept_source_route = 0
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_max_syn_backlog = 2048
 net.ipv4.tcp_synack_retries = 2
-net.ipv4.tcp_syn_retries = 5" > /etc/sysctl.conf
+net.ipv4.tcp_syn_retries = 5' > /etc/sysctl.conf
 
 	sysctl -p /etc/sysctl.conf
 
