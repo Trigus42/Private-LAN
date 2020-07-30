@@ -34,19 +34,24 @@ if [ $input = "Y" ]; then
 	else
 		ssh_port=$input
 	fi
-	printf "Port $ssh_port\nProtocol 2\nPermitRootLogin no\nDebianBanner no\nChallengeResponseAuthentication no\nUsePAM yes\nX11Forwarding yes\nPrintMotd no\nAcceptEnv LANG LC_*\nSubsystem       sftp    /usr/lib/openssh/sftp-server\n" > /etc/ssh/sshd_config
+	echo 'Port $ssh_port
+Protocol 2
+PermitRootLogin no
+DebianBanner no
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem       sftp    /usr/lib/openssh/sftp-server' > /etc/ssh/sshd_config
+
 fi
 
 printf "Install DNSCrypt-Proxy? (Y/n) > "
 read input
 if [ $input = "Y" ]; then
-	print "Choose System architecture: arm(0), x86_64(1), custom "
+	printf "Choose System architecture (arm, x86_64, ..) > "
 	read arc
-	if [ arc = "0" ]; then
-		arc="arm"
-	elif [ arc = 1 ]; then
-		arc="x86_64"
-	fi
 	
 	printf "Downloading DNSCrypt-Proxy...\n"
 	cd /tmp
@@ -164,11 +169,28 @@ if ! [ -z "$VPN"]; then
 	if [ $ipv6_support = "Y" ]; then
 		printf "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
 	fi
-	printf "#IP Spoofing protection\nnet.ipv4.conf.all.rp_filter = 1\nnet.ipv4.conf.default.rp_filter = 1\n#Ignore ICMP broadcast requests\nnet.ipv4.icmp_echo_ignore_broadcasts = 1" >> /etc/sysctl.conf
-	printf "#Ignore ICMP redirects\nnet.ipv4.conf.all.accept_redirects = 0\nnet.ipv6.conf.all.accept_redirects = 0" >> /etc/sysctl.conf
-	printf "#Ignore send redirects\nnet.ipv4.conf.all.send_redirects = 0\nnet.ipv4.conf.default.send_redirects = 0" >> /etc/sysctl.conf
-	printf "#Disable source packet routing\nnet.ipv4.conf.all.accept_source_route = 0\nnet.ipv6.conf.all.accept_source_route = 0\nnet.ipv4.conf.default.accept_source_route = 0\nnet.ipv6.conf.default.accept_source_route = 0" >> /etc/sysctl.conf
-	printf "#Block SYN attacks\nnet.ipv4.tcp_syncookies = 1\nnet.ipv4.tcp_max_syn_backlog = 2048\nnet.ipv4.tcp_synack_retries = 2\nnet.ipv4.tcp_syn_retries = 5" >> /etc/sysctl.conf
+	echo '#IP Spoofing protection
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+#Ignore ICMP broadcast requests
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+#Ignore ICMP redirects
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0"
+#Ignore send redirects
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+#Disable source packet routing
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv6.conf.default.accept_source_route = 0
+#Block SYN attacks
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_syn_backlog = 2048
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_syn_retries = 5" > /etc/sysctl.conf
+
 	sysctl -p /etc/sysctl.conf
 
 	printf "Configuring IP tables...\n"
