@@ -31,9 +31,9 @@ To assign static interface names you have to create this file:
  ### Unstable Repos
  If you want to use Wireguard on **Buster** you have to add the "Debian Unstable" repository to your apt sources first:
  ```
-echo "deb http://deb.debian.org/debian/ unstable main" >> /etc/apt/sources.list.d/unstable.list
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 
-printf 'Package: *\nPin: release a=unstable\nPin-Priority: 150\n' >> /etc/apt/preferences.d/limit-unstable
+echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
+wget -O - https://ftp-master.debian.org/keys/archive-key-$(lsb_release -sr).asc | sudo apt-key add -
+printf 'Package: *\nPin: release a=unstable\nPin-Priority: 150\n' > /etc/apt/preferences.d/limit-unstable
 apt update
 ```
 
