@@ -232,6 +232,13 @@ Your public IP should now differ from your previous one.
 
     chown root:root /etc/wireguard/wg0.conf
     chmod 600 /etc/wireguard/wg0.conf
+    
+### **Edit DNS server**
+*Altough devices on your network will use Pi-Hole your RPi itself will use the DNS server specifyed in the Wireguard config file. Thus for your RPI to use Pi-Hole you have to set it to "127.0.0.1":*
+```
+#/etc/wireguard/wg0.conf
+DNS = 127.0.0.1
+```
 
 ### **Enable Wireguard to start on boot:**
 
