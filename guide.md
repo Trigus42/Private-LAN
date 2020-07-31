@@ -212,9 +212,7 @@ ip6tables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 ### **Test the configuration:**  
 
     openvpn --config /etc/openvpn/<Server>.conf --daemon
-    curl ifconfig.me
 
-Your public IP should now differ from your previous one.
 </details>
 
 <details>
@@ -261,9 +259,7 @@ ip6tables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
 ### **Test the configuration:**  
 
     wg-quick up wg0
-    curl ifconfig.me
 
-Your public IP should now differ from your previous one.
 </details>
 
 ### **Save this configuration:**  
@@ -627,3 +623,49 @@ COMMIT
 
 COMMIT
 ```
+
+# Leak testing
+
+## Command line:
+
+### IP:
+```
+curl ifconfig.me
+```
+Output:
+```xml
+<Your IP>
+```
+### DNS:
+```
+dig whoami.akamai.net
+```
+Output:
+```xml
+; <<>> DiG 9.11.5-P4-5.1+deb10u1-Raspbian <<>> whoami.akamai.net
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 45507
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;whoami.akamai.net.             IN      A
+
+;; ANSWER SECTION:
+whoami.akamai.net.      180     IN      A       <Currently used DNS server>
+
+;; Query time: 1143 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Fri Jul 31 17:03:53 BST 2020
+;; MSG SIZE  rcvd: 62
+```
+
+## Browser:
+
+### IP and DNS:
+https://ipleak.net
+
+### DNS - More detailed :
+https://dnsleaktest.com
