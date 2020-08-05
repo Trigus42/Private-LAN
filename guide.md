@@ -84,7 +84,7 @@ routes = [
 { server_name=’<SERVER NAME2>’, via=[’ <RELAY NAME>’,<…>] }
 ]
 ```
-[Server/Relay lists ("Sources")](https://github.com/DNSCrypt/dnscrypt-resolvers/tree/master/v2)  
+[Server/Relay lists ("Sources")](https://github.com/DNSCrypt/dnscrypt-resolvers/tree/master/v3)  
 [More info about the servers](https://github.com/dyne/dnscrypt-proxy/blob/master/dnscrypt-resolvers.csv)
 </details>
 
