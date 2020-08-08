@@ -197,13 +197,13 @@ key /etc/openvpn/server/<PrivateKey>.key
 
 ### **Configure iptables:**  
 ```
-iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -i eth0 -o eth0 -j REJECT
 iptables -A FORWARD -s 192.168.178.0/24 -o tun0 -j ACCEPT
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 ##If your VPN service supports IPv6
-ip6tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+ip6tables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 ip6tables -A FORWARD -i eth0 -o eth0 -j REJECT
 ip6tables -A FORWARD -s fe80::/10 -o tun0 -j ACCEPT
 ip6tables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
@@ -244,13 +244,13 @@ DNS = 127.0.0.1
 
 ### **Configure iptables:**  
 ```
-iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -i eth0 -o eth0 -j REJECT
 iptables -A FORWARD -o wg0 -j ACCEPT
 iptables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
 
 ##If your VPN service supports IPv6
-ip6tables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+ip6tables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 ip6tables -A FORWARD -i eth0 -o eth0 -j REJECT
 ip6tables -A FORWARD -o wg0 -j ACCEPT
 ip6tables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
@@ -447,7 +447,7 @@ Depending on the configuration you edit (rules.v4/rules.v6) you just need to use
 :OUTPUT ACCEPT
 
 -A INPUT -i lo -j ACCEPT
--A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp --icmp-type 8 -j ACCEPT
 -A INPUT -p udp --dport 67:68 -j ACCEPT
 -A INPUT -s <LAN IP range> -j TRUSTED_IP
@@ -458,7 +458,7 @@ Depending on the configuration you edit (rules.v4/rules.v6) you just need to use
 -A TRUSTED_IP -p tcp --dport <SSH Port> -j ACCEPT
 -A TRUSTED_IP -j REJECT
 
--A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 #-A FORWARD --match multiport ! --dports <Allowed Ports> -o wg0 -j REJECT
 -A FORWARD -s <LAN IP range> -o wg0 -j ACCEPT
 
@@ -588,7 +588,7 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 :OUTPUT ACCEPT
 
 -A INPUT -i lo -j ACCEPT
--A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp --icmp-type 8 -j ACCEPT
 -A INPUT -p udp --dport 67:68 -j ACCEPT
 -A INPUT -s 192.168.0.0/24 -j TRUSTED_IP
@@ -602,7 +602,7 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 -A DNS -m mac --mac-source 81:7d:22:a2:3e:7d -m time --timestart 00:00 --timestop 06:00 --weekdays Sun,Mon,Tue,Wed,Thu -m string ! --string "/(.*\.|)whatsapp\.(net|com)|(.*\.|)(signal|whispersystems)\.org/" --algo regex -j REJECT
 -A DNS -j ACCEPT
 
--A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A FORWARD -p udp --dport 53 -j DNS_FORWARD
 -A FORWARD -p tcp --dport 53 -j DNS_FORWARD
 #-A FORWARD --match multiport ! --dports 80,443,53,20,115,143,993 -o wg0 -j REJECT
