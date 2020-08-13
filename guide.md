@@ -295,14 +295,11 @@ If DNSSEC is activated in DNSCrypt-Proxy, you should activate it in dnsmasq too:
 
 ### **Configure DHCP and DNS:**  
 **Turn off the DHCP server of your router first.**  
-
-Change in /etc/dnsmasq.d/01-pihole.conf:  
-```
-server=127.0.0.1#5300
-server=::1#5300
-```
-
 In the Pi-Hole web interface:
+- Settings &rightarrow; DNS &rightarrow;  
+&nbsp;&nbsp;&rightarrow; Disable all "Upstream DNS Servers"  
+&nbsp;&nbsp;&rightarrow; Enable Custom 1 (IPv4); Fill in ```127.0.0.1#5300```  
+&nbsp;&nbsp;&rightarrow; Enable Custom 3 (IPv6); Fill in ```::1#5300```  
 - Settings &rightarrow; DHCP &rightarrow; DHCP server enabled:heavy_check_mark: | Router (gateway) IP address: <IP of the RPi (eth0)> &rightarrow; Save
 
   If DNSSEC is activated in DNSCrypt-Proxy:
