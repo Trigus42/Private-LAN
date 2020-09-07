@@ -143,7 +143,7 @@ if ! [ -z "$VPN" ]; then
 			apt update >> /dev/null
 		fi
 
-		apt-get install openvpn -y >> /dev/null
+		apt-get install wireguard -y >> /dev/null
 		
 		printf "Type in the full path of your Wireguard config file > "
 		$input = ""
