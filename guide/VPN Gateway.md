@@ -1,5 +1,37 @@
 ## Setup the VPN gateway:
 
+### Interface names:
+With **Bullseye** we've got "predictable" interface names. But those are just hampering for our purposes.  
+To assign static interface names you have to create this file:
+ ```xml
+ #/etc/systemd/network/10-persistent-net.link
+ [Match]
+ MACAddress=<MAC>
+
+ [Link]
+ Name=<Custom name>
+ ```
+ <details>
+<summary>Example</summary>
+    
+ ```xml
+ [Match]
+ MACAddress=01:23:45:67:89:ab
+
+ [Link]
+ Name=eth0
+ ```
+ </details>
+ 
+ ### Unstable Repos
+ If you want to use Wireguard on **Buster** you have to add the "Debian Unstable" repository to your apt sources first:
+ ```
+echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
+wget -O - https://ftp-master.debian.org/keys/archive-key-$(lsb_release -sr).asc | sudo apt-key add -
+printf 'Package: *\nPin: release a=unstable\nPin-Priority: 150\n' > /etc/apt/preferences.d/limit-unstable
+apt update
+```
+
 ### **Edit kernel parameters to enable IP forwarding and enhance security:**  
 Uncomment/paste in /etc/sysctl.conf:  
 ```yaml
