@@ -1,5 +1,5 @@
 # Private-LAN
-This Repo contains guides and scripts for setting up various services on your Debian server (e.g. a RPi) aiming on creating an all around solution for you home network.
+This Repo contains guides and scripts for setting up various services on your Debian server (e.g. a RPi) aiming on creating an all around solution for your home network.
 
 ## General
 The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests, a VPN gateway and a VPN server.  
