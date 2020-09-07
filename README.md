@@ -18,7 +18,7 @@ Even if you don't wan't to use all services I would recommend setting up those y
 
 - ### PiVPN
 
-- ### Optional settings
+- ### Advanced
   Addional config advise and testing
 
 ## setup.sh
