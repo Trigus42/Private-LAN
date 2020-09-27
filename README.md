@@ -19,7 +19,12 @@ Even if you don't wan't to use all services I would recommend setting up those y
 - ### PiVPN
 
 - ### Advanced
-  Addional config advise and testing
+  - Leak testing
+  - Automated security updates
+  - Exclude devices from VPN Gateway/Pi-Hole
+  - Simple Firewall
+  - Per devices rules and timed rules
+  
 
 ## setup.sh
 The script is supposed to automate the basic setup process. However I don't actively work on it and wouldn't recommend using it yet.  
