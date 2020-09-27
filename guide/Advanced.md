@@ -315,7 +315,9 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 
 
     
-### **Sample configuration:** <details> <summary></summary>
+### **Sample configuration:**
+<details>
+<summary></summary>
     
 ```
 *filter
