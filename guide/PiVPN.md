@@ -24,7 +24,7 @@ Now you can add clients by using `pivpn add`.
 If you use WireGuard for Windows you won't be able to access your LAN right away.  
 You first need to add a route to your LAN via the tunnel:
 
-Execute as Admin in the Windows Command Prompt:
+Execute as admin in the Windows Command Prompt:
 
     route ADD <YOUR LAN> MASK <YOUR LANS SUBNET MASK> <THE WIREGAURD INTERFACE IP OF YOUR WG SERVER>
     
