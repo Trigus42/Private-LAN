@@ -18,3 +18,16 @@ Insert in /etc/wireguard/wg0.conf below `[Interface]`:
 ### **Add clients:**  
 
 Now you can add clients by using `pivpn add`.
+
+### **Additional Step for Windows Clients:**
+
+If you use WireGuard for Windows you won't be able to access your LAN right away.  
+You first need to add a route to your LAN via the tunnel:
+
+Execute as Admin in the Windows commandline:
+
+    route ADD <YOUR LAN> MASK <YOUR LANS SUBNET MASK> <THE WIREGAURD INTERFACE IP OF YOUR WG SERVER>
+    
+e.g.:
+    
+    route ADD 192.168.0.0 MASK 255.255.255.0 10.6.0.1
