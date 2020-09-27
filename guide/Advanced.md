@@ -276,7 +276,9 @@ Sample configuration for /etc/cron.d/iptables:
 00 12 * * * root /usr/sbin/iptables-restore /etc/iptables/rules2.v4
 00 12 * * * root /usr/sbin/ip6tables-restore ip6tables-restore /etc/iptables/rules2.v6
 ```
-Cron syntax:
+ <details>
+<summary>Cron syntax</summary>
+    
 ```
 
 *     *     *     *     *  Command to be executed
@@ -293,7 +295,8 @@ Cron syntax:
 
 +------------- minute (0 - 59)
 ```
-
+ </details>
+ 
 PS: Don't forget to set your time-zone first.
 
 ### **Block certain Domains:**
@@ -310,7 +313,10 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 
     -A INPUT -p udp --dport 53 -m string --string "/(.*\.|)googlevideo\..*/" --algo regex -j DROP
 
-### **Sample configuration:**
+
+    
+### **Sample configuration:** <details> <summary></summary>
+    
 ```
 *filter
 :INPUT DROP
@@ -356,3 +362,5 @@ COMMIT
 
 COMMIT
 ```
+
+ </details>
