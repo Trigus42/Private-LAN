@@ -10,17 +10,17 @@ If you encounter any problems feel free to open up an issue.
 ## Guide
 Even if you don't wan't to use all services I would recommend setting up those you do want to in the following order.  
 
-- ### DNSCrypt-Proxy
+- ### [DNSCrypt-Proxy](guide/DNSCrypt.md)
   Must be set up before configuring Pi-Hole to use localhost:5300 as DNS.
 
-- ### VPN Gateway
+- ### [VPN Gateway](guide/VPNGateway.md)
   Must be set up before configuring the Pi-Hole DHCP to advertise your server as network gateway.
 
-- ### Pi-Hole
+- ### [Pi-Hole](guide/Pi-Hole.md)
 
-- ### PiVPN
+- ### [PiVPN](guide/PiVPN.md)
 
-- ### Advanced
+- ### [Advanced](guide/Advanced.md)
   - Leak testing
   - Automated security updates
   - Exclude devices from VPN Gateway/Pi-Hole
