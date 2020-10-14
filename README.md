@@ -3,7 +3,7 @@ This Repo contains guides and scripts for setting up various services on your De
 
 ## General
 The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests, a VPN gateway and a VPN server.  
-I assume that all commands are executed as root, Raspbian Buster or Bullseye is used as operating system and your network interface is named "eth0". If you wan't to use you WiFi network card or another Ethernet interface just replace "eth0" by it's name everywhere.
+I assume that all commands are executed as root, Debain Buster or Bullseye is used as operating system and your network interface is named "eth0". If you want to use you WiFi network card or another Ethernet interface just replace "eth0" by it's name everywhere.
 
 If you encounter any problems feel free to open up an issue.
 
