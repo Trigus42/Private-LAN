@@ -12,8 +12,8 @@ Because your server also is a Wireguard client the request goes into eth0 but th
 
 Insert in /etc/wireguard/wg0.conf below `[Interface]`:
 
-    PostUp = ip route add from <Your IP - as configured in /etc/dhcpcd.conf> lookup main && ip route add from 10.6.0.0/24 lookup main
-    PostDown = ip route delete from <Your IP - as configured in /etc/dhcpcd.conf> lookup main && ip route delete from 10.6.0.0/24 lookup main
+    PostUp = ip rule add from <Your IP - as configured in /etc/dhcpcd.conf> lookup main && ip rule add from 10.6.0.0/24 lookup main
+    PostDown = ip rule delete from <Your IP - as configured in /etc/dhcpcd.conf> lookup main && ip rule delete from 10.6.0.0/24 lookup main
 
 ### **Add clients:**  
 
