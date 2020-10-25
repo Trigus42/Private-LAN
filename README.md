@@ -1,32 +1,16 @@
-# Private-LAN
-This Repo contains guides and scripts for setting up various services on your Debian server (e.g. a RPi) aiming on creating an all around solution for your home network.
-
 ## General
 The goal is to set up Pi-Hole as DNS and DHCP server, DNSCrypt-Proxy to encrypt the DNS requests, a VPN gateway and a VPN server.  
-I assume that all commands are executed as root, Debain Buster or Bullseye is used as operating system and your network interface is named "eth0". If you want to use you WiFi network card or another Ethernet interface just replace "eth0" by it's name everywhere.
+I assume that all commands are executed as root and Debian Buster or Bullseye are used as operating system.
 
-If you encounter any problems feel free to open up an issue.
+You might have to change some names and addresses. Depending on your environment you may have to adjust:
+- The name of your network interface (eth0)
+- The subnet and IP of your network interface (192.168.0.0/24 and 192.168.0.2)
 
-## Guide
-Even if you don't wan't to use all services I would recommend setting up those you do want to in the following order.  
+## Variants
 
-- ### [DNSCrypt-Proxy](guide/DNSCrypt.md)
-  Must be set up before configuring Pi-Hole to use localhost:5300 as DNS.
+- ### [With Docker](docker/guide/main.md)
+  - Easy scalability (you can run multiple instances on one host)
+  - No need for Pi-Hole or DNSCrypt-Proxy to support for your system 
+  - Should work on every system that supports Docker and Wireguard, iproute2 and iptables
 
-- ### [VPN Gateway](guide/VPNGateway.md)
-  Must be set up before configuring the Pi-Hole DHCP to advertise your server as network gateway.
-
-- ### [Pi-Hole](guide/Pi-Hole.md)
-
-- ### [PiVPN](guide/PiVPN.md)
-
-- ### [Advanced](guide/Advanced.md)
-  - Leak testing
-  - Automated security updates
-  - Exclude devices from VPN Gateway/Pi-Hole
-  - Simple Firewall
-  - Per devices rules and timed rules
-  
-
-## setup.sh
-The script is supposed to automate the basic setup process. However I don't actively work on it and wouldn't recommend using it yet.  
+- ### [Standard](bare-metal/guide/main.md)
