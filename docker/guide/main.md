@@ -233,7 +233,7 @@ lan_subnet="$(ip -o -f inet addr show $lan_if | awk '/scope global/ {print $4}' 
 # Get Wireguard container IP
 wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gateway)"
 
-# Default route in new table via the VPN Gateway
+# Default route in a new table via the VPN Gateway
 ip route add default via $wireguard_gateway_ip table 200
 # Exception to the default route: Route requests for the Docker network via the docker interface
 ip route add $docker_if_subnet via $docker_if_ip table 200
@@ -265,7 +265,7 @@ done;
 sh /etc/private-lan/files/set-route.sh pihole $wireguard_gateway_ip $lan_subnet $docker_if_ip
 
 # Run "/etc/private-lan/files/set-route.sh" each time the container "pihole" is restarted 
-docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/dockerfiles/set-route.sh pihole '$wireguard_gateway_ip' '$lan_subnet' '$docker_if_ip'") }'
+docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/files/set-route.sh pihole '$wireguard_gateway_ip' '$lan_subnet' '$docker_if_ip'") }'
 ```
 
     $ chmod +x /etc/init.d/gateway.service
