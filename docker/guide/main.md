@@ -237,12 +237,11 @@ wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.
 ip route add default via $wireguard_gateway_ip table 200
 # Exception to the default route: Route requests for the Docker network via the docker interface
 ip route add $docker_if_subnet via $docker_if_ip table 200
-# Use new routing table for all request coming into the interface eth0 (Client Network)
+# Use new routing table for all request coming into the LAN interface
 ip rule add iif eth0 lookup 200
 
 # Uncomment if you want the host to use the VPN tunnel too
-# Use new routing table for all request except those coming from the docker interface
-# ip rule add not oif $docker_if lookup 200
+#ip route replace default via $wireguard_gateway_ip
 
 # Uncomment if you want to use PiVPN
 # Exception to the default route: Route packets for the Wireguard clients (responses to requests) via the Wireguard interface
