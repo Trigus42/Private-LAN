@@ -293,7 +293,6 @@ Uncomment/paste in /etc/sysctl.conf:
 ```yaml
 #IP Forwarding
 net.ipv4.ip_forward = 1
-net.ipv6.conf.all.forwarding=1 ##If your VPN supports IPv6
 #IP Spoofing protection
 net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.default.rp_filter = 1
@@ -349,7 +348,7 @@ Paste this and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf
 interface eth0
 static ip_address=<IP> ##The IP address you want your server to have
 static routers=<IP> ##The IP address of your router
-static domain_name_servers=127.0.0.1
+static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 
 <details>
@@ -359,7 +358,7 @@ static domain_name_servers=127.0.0.1
 interface eth0
 static ip_address=192.168.0.2
 static routers=192.168.0.1
-static domain_name_servers=127.0.0.1
+static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
 
