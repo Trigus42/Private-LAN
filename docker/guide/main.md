@@ -252,8 +252,8 @@ iptables -I FORWARD -i eth0 -o eth0 -j REJECT
 # Allow forwarding from eth0 trough the docker interface to the Wireguard gateway
 iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT
 
-# NAT packets being routed to the docker containers from outside the docker network cause the containers don't have a route to the source network
-iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -o $docker_if -j MASQUERADE
+# Replace the source IP of packets going out trough the docker interface to the Wireguard container
+iptables -t nat -I POSTROUTING -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
 
 #Wait until the pihole container finished start up
 until [ "`/usr/bin/docker inspect -f {{.State.Running}} pihole`"=="true" ]; do
@@ -261,10 +261,10 @@ until [ "`/usr/bin/docker inspect -f {{.State.Running}} pihole`"=="true" ]; do
 done;
 
 #Set route of pihole container to the Wireguard container
-sh /etc/private-lan/files/set-route.sh pihole $wireguard_gateway_ip
+sh /etc/private-lan/files/set-route.sh pihole $wireguard_gateway_ip $lan_subnet $docker_if_ip
 
 # Run "/etc/private-lan/files/set-route.sh" each time the container "pihole" is restarted 
-docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/files/set-route.sh pihole '$wireguard_gateway_ip'") }'
+docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/files/set-route.sh pihole '$wireguard_gateway_ip' '$lan_subnet' '$docker_if_ip'") }'
 ```
 
     $ chmod +x /etc/init.d/gateway.service
