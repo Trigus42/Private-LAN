@@ -1,7 +1,7 @@
 ### **Install PiVPN:**  
     curl -L https://install.pivpn.io | bash
  - Choose Wireguard as VPN type
- - If you got a changing public IP use a [DynDNS](https://wiki.archlinux.org/index.php/Dynamic_DNS) provider
+ - If you got a changing public IP use a [DynDNS](https://wiki.archlinux.org/index.php/Dynamic_DNS) provider like [dynv6](https://dynv6.com/)
  - Don't change your interface config from what you configured before (/etc/dhcpcd.conf)
 
 ### **Add clients:**  

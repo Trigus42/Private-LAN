@@ -222,16 +222,13 @@ Create the file /etc/init.d/gateway.service with the following content:
 # Name of the interface that connects to your LAN (usually eth0)
 lan_if="eth0"
 
-# Get Docker interface name of docker network "net"
+# Get environment variables
 docker_if="br-$(docker network ls | grep net | cut -d' ' -f1)"
-# Get Docker interface IP
 docker_if_ip="$(ip -4 addr show $docker_if | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
-# Get docker network subnet
 docker_if_subnet="$(ip -o -f inet addr show $docker_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
-# Get LAN subnet
 lan_subnet="$(ip -o -f inet addr show $lan_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
-# Get Wireguard container IP
 wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gateway)"
+default_gateway="$(ip route show default dev $lan_if | awk '/default/ { print $3 }')"
 
 # Default route in a new table via the VPN Gateway
 ip route add default via $wireguard_gateway_ip table 200
@@ -241,7 +238,10 @@ ip route add $docker_if_subnet via $docker_if_ip table 200
 ip rule add iif eth0 lookup 200
 
 # Uncomment if you want the host to use the VPN tunnel too
-#ip route replace default via $wireguard_gateway_ip
+# Route all traffic trough the Wireguard tunnel except for the the "wireguard_gateway" container traffic
+# ip route add default via $default_gateway table 201
+# ip rule add from $wireguard_gateway_ip lookup 201
+# ip route replace default via $wireguard_gateway_ip
 
 # Uncomment if you want to use PiVPN
 # Exception to the default route: Route packets for the Wireguard clients (responses to requests) via the Wireguard interface
@@ -253,18 +253,18 @@ iptables -I FORWARD -i eth0 -o eth0 -j REJECT
 iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT
 
 # Replace the source IP of packets going out trough the docker interface to the Wireguard container
-iptables -t nat -I POSTROUTING -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
+iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
 
-#Wait until the pihole container finished start up
+# Wait until the pihole container finished start up
 until [ "`/usr/bin/docker inspect -f {{.State.Running}} pihole`"=="true" ]; do
     sleep 0.1;
 done;
 
-#Set route of pihole container to the Wireguard container
-sh /etc/private-lan/files/set-route.sh pihole $wireguard_gateway_ip $lan_subnet $docker_if_ip
+# Set the default route of the "pihole" container to the "wireguard_gateway" container and add an exception for packets addressed to the LAN or Wireguard clients
+bash /etc/private-lan/files/set-route.sh pihole $wireguard_gateway_ip $docker_if_ip $lan_subnet 10.6.0.0/24
 
-# Run "/etc/private-lan/files/set-route.sh" each time the container "pihole" is restarted 
-docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/files/set-route.sh pihole '$wireguard_gateway_ip' '$lan_subnet' '$docker_if_ip'") }'
+# Reconfigure the routing table each time the container "pihole" is restarted 
+docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/files/set-route.sh pihole '$wireguard_gateway_ip' '$docker_if_ip' '$lan_subnet' 10.6.0.0/24") }'
 ```
 
     $ chmod +x /etc/init.d/gateway.service
@@ -419,3 +419,7 @@ dhcp-host=81:7d:22:a2:3e:7e,192.168.0.11,PC
 #### Restart Pi-Hole
 
     $ docker restart pihole
+
+# Optional
+
+- ### [PiVPN](PiVPN.md)
