@@ -8,7 +8,7 @@ You might have to change some names and addresses. Depending on your environment
 
 ## Variants
 
-- ### [With Docker](docker/guide/main.md)
+- ### [Docker](docker/guide/main.md)
   - Easy scalability (you can run multiple instances on one host)
   - No need for Pi-Hole or DNSCrypt-Proxy to support for your system 
   - Should work on every system that supports Docker and Wireguard, iproute2 and iptables
