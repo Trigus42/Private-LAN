@@ -4,6 +4,13 @@
  - If you got a changing public IP use a [DynDNS](https://wiki.archlinux.org/index.php/Dynamic_DNS) provider like [dynv6](https://dynv6.com/)
  - Don't change your interface config from what you configured before (/etc/dhcpcd.conf)
 
+### **Adjust routes:**
+In ```/etc/init.d/gateway.service``` uncomment:
+
+    ip route add 10.6.0.0/24 via 10.6.0.1 table 200
+
+Reboot or execute the command above yourself.
+
 ### **Add clients:**  
 
 Now you can add clients by using `pivpn add`.
