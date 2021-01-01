@@ -60,4 +60,5 @@ You might have to change some names and addresses. Depending on your environment
   +---------------------------------------------------------------------------------------------------------------------+
   ```
 
-- ### [Standard](bare-metal/guide/main.md)
+- ### [Legacy](bare-metal/guide/main.md)
+I won't actively work on it anymore but keep it for anyone looking for a reference to maintain their existing setup.
