@@ -13,7 +13,6 @@ If anything is unclear to you, please feel free to ask using 'Discussions'.
 - ### [Unbound](unbound/guide/main.md)
 
 - ### [DNSCrypt](dnscrypt/guide/main.md)
-  <br/><br/>
 
   Basic diagram (leaving out quite much, but good for grasping the general concept I think):
   <br/><br/>
