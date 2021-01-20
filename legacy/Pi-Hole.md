@@ -1,6 +1,23 @@
-#### DHCP config
+## Install Pi-Hole:  
+> Our code is completely open, but piping to bash can be dangerous. For a safer install, review the code and then run the installer locally.
 
-Create the file ```/etc/private-lan/volumes/etc-dnsmasq.d/dhcp.conf``` with the following content:
+    curl -sSL https://install.pi-hole.net | bash 
+
+For this guide it's irrelevant what you choose in the installer.
+
+### **Configure the Interface:**  
+In case you didn't already set up your interface during the Pi-Hole installation, paste and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf:  
+```yaml
+interface eth0
+static ip_address=<IP> ##The IP address you want your server to have
+static routers=<IP> ##The IP address of your router
+static domain_name_servers=127.0.0.1
+```
+
+#### DHCP config
+**Turn off the DHCP server of your router first.**  
+
+Create the file ```/etc/dnsmasq.d/dhcp.conf``` with the following content:
 ```xml
 dhcp-authoritative
 domain=lan
@@ -51,11 +68,3 @@ dhcp-host=81:7d:22:a2:3e:7d,192.168.0.10,PC-VPN,set:VPN
 dhcp-host=81:7d:22:a2:3e:7e,192.168.0.11,PC
 ```
 </details>
-
-#### Restart Pi-Hole
-
-    $ docker restart pihole
-
-#### Disable other DHCP servers
-
-Most likely you have to disable the DHCP server of your router. How to do this depends on the router but while some may not allow to configure as custom DNS server, there is almost always an option to turn off it's DHCP server.

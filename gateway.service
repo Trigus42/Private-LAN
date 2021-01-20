@@ -3,7 +3,7 @@ Description=adding routes and rules to enable the Docker Wireguard gateway
 After=docker.service
 
 [Service]
-ExecStart=/etc/init.d/gateway.service
+ExecStart=/etc/init.d/gateway.sh
 
 [Install]
 WantedBy=default.target
