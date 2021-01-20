@@ -8,15 +8,17 @@ docker_if="br-$(docker network ls | grep net | cut -d' ' -f1)"
 docker_if_ip="$(ip -4 addr show $docker_if | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
 docker_if_subnet="$(ip -o -f inet addr show $docker_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 lan_subnet="$(ip -o -f inet addr show $lan_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
-wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gateway)"
+wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gw)"
 default_gateway="$(ip route show default dev $lan_if | awk '/default/ { print $3 }')"
 
 # Default route in a new table via the VPN Gateway
 ip route add default via $wireguard_gateway_ip table 200
-# Exception to the default route: Route requests for the Docker network via the docker interface
-ip route add $docker_if_subnet via $docker_if_ip table 200
-# Use new routing table for all request coming into the LAN interface
-ip rule add iif eth0 lookup 200
+# Use new table for all packets
+ip rule add from all iif eth0 lookup 200
+# This rule is created later thus it'S priority is higher than "ip rule add from all lookup table 200".
+# But it will only be used if at least the first bit of an IP range in it is matching the destination IP.
+# It won't match 0.0.0.0/0 ("default")
+ip rule add from all lookup main suppress_prefixlength 0
 
 # Uncomment if you want the host to use the VPN tunnel too
 # Route all traffic trough the Wireguard tunnel except for the the "wireguard_gateway" container traffic
@@ -24,17 +26,20 @@ ip rule add iif eth0 lookup 200
 # ip rule add from $wireguard_gateway_ip lookup 201
 # ip route replace default via $wireguard_gateway_ip
 
-# Uncomment if you want to use PiVPN
-# Exception to the default route: Route packets for the Wireguard clients (responses to requests) via the Wireguard interface
-# ip route add 10.6.0.0/24 via 10.6.0.1 table 200
-
 # Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
-iptables -I FORWARD -i eth0 -o eth0 -j REJECT
+if ! $(iptables -C FORWARD -i eth0 -o eth0 -j REJECT &> /dev/null); then
+    iptables -I FORWARD -i eth0 -o eth0 -j REJECT
+fi
+
 # Allow forwarding from eth0 trough the docker interface to the Wireguard gateway
-iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT
+if ! $(iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT &> /dev/null); then
+    iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT
+fi
 
 # Replace the source IP of packets going out trough the docker interface to the Wireguard container
-iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
+if ! $(iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE &> /dev/null); then
+    iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
+fi
 
 # Wait until the pihole container finished start up
 until [ "`/usr/bin/docker inspect -f {{.State.Running}} pihole`"=="true" ]; do

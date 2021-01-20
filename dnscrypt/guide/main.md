@@ -1,4 +1,10 @@
-# Static Interface configuration:
+# Download files:
+
+    $ git clone https://github.com/Trigus42/Private-LAN /etc/private-lan
+
+# Network configuration
+
+#### Static Interface configuration:
 Paste this and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf: 
 
 ```yaml
@@ -34,7 +40,6 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 
     $ systemctl enable docker
 
-
 # Install Wireguard
 #### Install the Wireguard kernel module if your are on Debain Buster or lower :
 
@@ -56,20 +61,45 @@ On any standard Debian installation run:
 
     $ apt install wireguard -y
 
-# Prepare the volumes
+#### Wireguard config
 
-#### Create the volume folders:
+Download your config file and place it in ```/etc/private-lan/volumes/wireguard-gw``` as ```wg0.conf```.  
+Insert the following lines in the Wireguard config file below `[Interface]`:
+```
+# Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
+PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
+# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your subnet (https://unix.stackexchange.com/questions/615255/docker-container-as-network-gateway)
+PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add <Your Subnet> via 172.16.238.1
+PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete <Your Subnet> via 172.16.238.1
+```
 
-    $ mkdir -p /etc/private-lan/volumes
-    $ cd /etc/private-lan/volumes
-    $ mkdir dnscrypt-proxy wireguard-gateway etc-pihole etc-dnsmasq.d
+<details>
+<summary>Example</summary>
 
-#### Get config files:
+```
+[Interface]
+PrivateKey = ...
+Address = 100.64.67.64/32
+DNS = 10.255.255.3
 
-    $ git clone https://github.com/Trigus42/Private-LAN /tmp/private-lan
-    $ mv /tmp/private-lan/docker/files/etc/* /etc/private-lan/
+PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
+PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add 192.168.0.0/24 via 172.16.238.1
+PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete 192.168.0.0/24 via 172.16.238.1
 
-#### Configure DNSCrypt-Proxy:
+[Peer]
+PublicKey = ...
+AllowedIPs = 0.0.0.0/0
+Endpoint = lon-229-wg.whiskergalaxy.com:443
+PresharedKey = ...
+```
+</details>
+
+Assign permissions and ownership (No one but root should be able to see Private Key and PSK):
+
+    $ chown -R root /etc/private-lan/volumes/wireguard-gw
+    $ chmod 600 -R /etc/private-lan/volumes/wireguard-gw
+
+# DNSCrypt-Proxy:
 
     $ wget https://raw.githubusercontent.com/DNSCrypt/dnscrypt-proxy/release/dnscrypt-proxy/example-dnscrypt-proxy.toml -O /etc/private-lan/volumes/dnscrypt-proxy/dnscrypt-proxy.toml
 
@@ -103,57 +133,19 @@ routes = [
 [More info about the servers](https://github.com/dyne/dnscrypt-proxy/blob/master/dnscrypt-resolvers.csv)
 </details>
 
-#### Configure Wireguard
-
-Download your config file and place it in ```/etc/private-lan/volumes/wireguard-gateway``` as ```wg0.conf```.  
-Insert the following lines in the Wireguard config file below `[Interface]`:
-```
-# Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
-PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your subnet (https://unix.stackexchange.com/questions/615255/docker-container-as-network-gateway)
-PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add <Your Subnet> via 172.16.238.1
-PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete <Your Subnet> via 172.16.238.1
-```
-
-<details>
-<summary>Example</summary>
-
-```
-[Interface]
-PrivateKey = ...
-Address = 100.64.67.64/32
-DNS = 10.255.255.3
-
-PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add 192.168.0.0/24 via 172.16.238.1
-PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete 192.168.0.0/24 via 172.16.238.1
-
-[Peer]
-PublicKey = ...
-AllowedIPs = 0.0.0.0/0
-Endpoint = lon-229-wg.whiskergalaxy.com:443
-PresharedKey = ...
-```
-</details>
-
-Assign permissions and ownership (No one but root should be able to see Private Key and PSK):
-
-    $ chown -R root /etc/private-lan/volumes/wireguard-gateway
-    $ chmod 600 -R /etc/private-lan/volumes/wireguard-gateway
-
 # Setup routing and NAT
 
 #### Place files in directories
 ```
-$ mv /tmp/private-lan/docker/files/service/init.d/gateway.service /etc/init.d/
-$ mv /tmp/private-lan/docker/files/service/systemd/gateway.service /etc/systemd/system/
-$ chmod 644 /etc/init.d/gateway.service
+$ mv /etc/private-lan/gateway.sh /etc/init.d/
+$ mv /etc/private-lan/gateway.service /etc/systemd/system/
+$ chmod 644 /etc/init.d/gateway.sh
 $ chmod 644 /etc/systemd/system/gateway.service
 ```
 #### Make the scripts executable
 ```
-$ chmod +x /etc/init.d/gateway.service
-$ chmod +x /etc/private-lan/files/set-route.sh
+$ chmod +x /etc/init.d/gateway.sh
+$ chmod +x /etc/private-lan/set-route.sh
 ```
 #### Enable as a new service
 ```
@@ -161,7 +153,7 @@ $ systemctl daemon-reload
 $ systemctl enable gateway.service
 ```
 
-#### **Edit kernel parameters to enable IP forwarding and enhance security:**  
+#### Edit kernel parameters to enable IP forwarding and enhance security:
 Uncomment/paste in /etc/sysctl.conf:  
 ```yaml
 #IP Forwarding
@@ -204,8 +196,7 @@ Load these changes:
 
 # Start everything up
 
-    $ cd /etc/private-lan/
-    $ docker-compose up -d
+    $ docker-compose -f /etc/private-lan/docker-compose.yml up -d
     $ systemctl start gateway.service
 
 #### Set the Pi-Hole web interface password
@@ -214,10 +205,11 @@ Load these changes:
 
 #### Client setup
 
-You can now manually configure your server as network gateway and DNS server. \
+You can now manually configure your server as network gateway and DNS server.  
 However it's much more convenient to simply activate the DHCP server build into Pi-Hole.
 
 # Optional
 
 - ### [DHCP server](DHCP.md)
 - ### [PiVPN](PiVPN.md)
+- ### [Updating](update.md)
