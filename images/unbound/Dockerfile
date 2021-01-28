@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.12
 
 RUN apk -U upgrade; \
     apk add --update --no-cache bash ca-certificates bind-tools wget unbound

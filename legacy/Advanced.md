@@ -108,14 +108,14 @@ dhcp-host=<MAC address>,<IP address>,<NAME>
 ```
 dhcp-authoritative
 #VPN
-dhcp-range=set:tag0,92.168.0.10,192.168.0.99,24h
-dhcp-option-force=tag:tag0,3,192.168.0.2
-dhcp-option=tag:tag0,6,192.168.0.2
+dhcp-range=set:tag0,92.168.0.10,192.168.178.99,24h
+dhcp-option-force=tag:tag0,3,192.168.178.2
+dhcp-option=tag:tag0,6,192.168.178.2
 
 #Direct
-dhcp-range=set:tag1,192.168.0.100,192.168.0.199,24h
-dhcp-option=tag:tag1,3,192.168.0.1
-dhcp-option=tag:tag1,6,192.168.0.2
+dhcp-range=set:tag1,192.168.178.100,192.168.178.199,24h
+dhcp-option=tag:tag1,3,192.168.178.1
+dhcp-option=tag:tag1,6,192.168.178.2
 
 dhcp-leasefile=/etc/pihole/dhcp.leases
 #quiet-dhcp
@@ -125,8 +125,8 @@ dhcp-rapid-commit
 ```
 04-pihole-static-dhcp.conf: 
 ```
-dhcp-host=81:7d:22:a2:3e:7d,192.168.0.10,VPN-Computer
-dhcp-host=81:7d:22:a2:3e:7e,192.168.0.100,Computer
+dhcp-host=81:7d:22:a2:3e:7d,192.168.178.10,VPN-Computer
+dhcp-host=81:7d:22:a2:3e:7e,192.168.178.100,Computer
 ```
 </details>
 </details>
@@ -149,14 +149,14 @@ dhcp-host=<MAC address>,<IP address>,<NAME>,set:<tag>
 
 In /etc/dnsmasq.d/02-pihole-dhcp.conf:
 ```
-dhcp-option=tag:Direct,3,192.168.0.1
-dhcp-option=tag:VPN,3,192.168.0.2
+dhcp-option=tag:Direct,3,192.168.178.1
+dhcp-option=tag:VPN,3,192.168.178.2
 ```
 
 04-pihole-static-dhcp.conf:  
 ```
-dhcp-host=81:7d:22:a2:3e:7d,192.168.0.10,VPN-Computer,set:VPN
-dhcp-host=81:7d:22:a2:3e:7e,192.168.0.10,Computer,set:Direct
+dhcp-host=81:7d:22:a2:3e:7d,192.168.178.10,VPN-Computer,set:VPN
+dhcp-host=81:7d:22:a2:3e:7e,192.168.178.10,Computer,set:Direct
 ```
 </details>
 </details>
@@ -208,8 +208,8 @@ COMMIT
 COMMIT
 ```
 *Example IP ranges:  
-IPv4: 192.168.0.0/24  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [192.168.0.1 - 192.168.0.255]  
+IPv4: 192.168.178.0/24  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [192.168.178.1 - 192.168.178.255]  
 IPv6: 2001:db8::/32  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2001:db8:0:0:0:0:0:0 - 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff]*
 
@@ -332,7 +332,7 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp --icmp-type 8 -j ACCEPT
 -A INPUT -p udp --dport 67:68 -j ACCEPT
--A INPUT -s 192.168.0.0/24 -j TRUSTED_IP
+-A INPUT -s 192.168.178.0/24 -j TRUSTED_IP
 
 -A TRUSTED_IP -p udp --dport 53 -j DNS
 -A TRUSTED_IP -p icmp -j ACCEPT
@@ -347,7 +347,7 @@ This rule filters all UDP DNS requests for "*.googlevideo.*" and "googlevideo.*"
 -A FORWARD -p udp --dport 53 -j DNS_FORWARD
 -A FORWARD -p tcp --dport 53 -j DNS_FORWARD
 #-A FORWARD --match multiport ! --dports 80,443,53,20,115,143,993 -o wg0 -j REJECT
--A FORWARD -s 192.168.0.0/24 -o wg0 -j ACCEPT
+-A FORWARD -s 192.168.178.0/24 -o wg0 -j ACCEPT
 
 -A DNS_FORWARD -m mac --mac-source 81:7d:22:a2:3e:7d -j REJECT
 -A DNS_FORWARD -j ACCEPT

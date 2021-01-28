@@ -46,15 +46,15 @@ dhcp-host=<MAC address>,<IP address>,<NAME>,set:<tag>
 
 ```xml
 dhcp-authoritative
-dhcp-range=192.168.0.20,192.168.0.254,24h
+dhcp-range=192.168.178.20,192.168.178.254,24h
 
 # Router
-dhcp-option=3,192.168.0.1
+dhcp-option=3,192.168.178.1
 # Pi-Hole
-dhcp-option=6,192.168.0.2
+dhcp-option=6,192.168.178.2
 
 # VPN
-dhcp-option=tag:VPN,3,192.168.0.2
+dhcp-option=tag:VPN,3,192.168.178.2
 
 dhcp-leasefile=/etc/pihole/dhcp.leases
 #quiet-dhcp
@@ -64,7 +64,7 @@ dhcp-rapid-commit
 ```
 
 ```
-dhcp-host=81:7d:22:a2:3e:7d,192.168.0.10,PC-VPN,set:VPN
-dhcp-host=81:7d:22:a2:3e:7e,192.168.0.11,PC
+dhcp-host=81:7d:22:a2:3e:7d,192.168.178.10,PC-VPN,set:VPN
+dhcp-host=81:7d:22:a2:3e:7e,192.168.178.11,PC
 ```
 </details>

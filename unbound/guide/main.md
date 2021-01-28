@@ -1,7 +1,3 @@
-# Download files:
-
-    $ git clone https://github.com/Trigus42/Private-LAN /etc/private-lan
-
 # Network configuration
 
 #### VLAN
@@ -33,13 +29,13 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 
 ```yaml
 interface eth0
-static ip_address=192.168.0.2
-static routers=192.168.0.1
+static ip_address=192.168.178.2
+static routers=192.168.178.1
 static domain_name_servers=8.8.8.8 1.1.1.1
 
 interface eth0.1
-static ip_address=192.168.0.3
-static routers=192.168.0.1
+static ip_address=192.168.178.3
+static routers=192.168.178.1
 static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
@@ -58,6 +54,23 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 #### Enable Docker to start on boot:
 
     $ systemctl enable docker
+
+# Download files:
+
+    $ git clone https://github.com/Trigus42/Private-LAN /tmp/private-lan
+
+#### Create volume directories:
+
+    $ mkdir -p /etc/private-lan/volumes/{unbound,pihole/{pihole,pihole-vpn,dnsmasq,dnsmasq-vpn},dnsmasq,wireguard-gw}
+
+#### Place files:
+
+    $ mv /tmp/private-lan/unbound /etc/private-lan
+    $ mv /tmp/private-lan/set-route.sh /etc/private-lan
+    $ mv /etc/private-lan/gateway.sh /etc/init.d/
+    $ mv /tmp/private-lan/gateway.service /etc/systemd/system/
+    $ mv /etc/private-lan/unbound.conf /etc/private-lan/volumes/unbound/
+
 
 #### Edit docker-compose file:
 
@@ -107,8 +120,8 @@ Address = 100.64.67.64/32
 DNS = 10.255.255.3
 
 PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add 192.168.0.0/24 via 172.16.238.1
-PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete 192.168.0.0/24 via 172.16.238.1
+PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add 192.168.178.0/24 via 172.16.238.1
+PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete 192.168.178.0/24 via 172.16.238.1
 
 [Peer]
 PublicKey = ...
@@ -120,18 +133,11 @@ PresharedKey = ...
 
 Assign permissions and ownership (No one but root should be able to see Private Key and PSK):
 
-    $ chown -R root /etc/private-lan/volumes/wireguard-gw
+    $ chown -R root:root /etc/private-lan/volumes/wireguard-gw
     $ chmod 600 -R /etc/private-lan/volumes/wireguard-gw
 
 # Setup routing and NAT
 
-#### Place files in directories
-```
-$ mv /etc/private-lan/gateway.sh /etc/init.d/
-$ mv /etc/private-lan/gateway.service /etc/systemd/system/
-$ chmod 644 /etc/init.d/gateway.sh
-$ chmod 644 /etc/systemd/system/gateway.service
-```
 #### Make the scripts executable
 ```
 $ chmod +x /etc/init.d/gateway.sh
