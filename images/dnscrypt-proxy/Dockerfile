@@ -1,7 +1,6 @@
-FROM alpine:latest
+FROM alpine:3.12
 
-RUN apk update; \
-    apk upgrade; \
+RUN apk -U upgrade; \
     apk add --no-cache dnscrypt-proxy bind-tools; \
     # clean up
     rm -rf /var/cache/apk/* /tmp/*

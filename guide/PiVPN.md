@@ -26,4 +26,4 @@ Execute as admin in the Windows Command Prompt:
     
 e.g.:
     
-    route ADD 192.168.0.0 MASK 255.255.255.0 10.6.0.1
+    route ADD 192.168.178.0 MASK 255.255.255.0 10.6.0.1

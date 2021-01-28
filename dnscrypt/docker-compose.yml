@@ -54,59 +54,20 @@ services:
       - SYS_NICE
     restart: unless-stopped
 
-  pihole-vpn:
-    image: pihole/pihole:latest
-    container_name: pihole-vpn
+  dnscrypt-proxy:
+    build: files/dnscrypt-proxy
+    container_name: dnscrypt-proxy
     networks:
       net:
-        ipv4_address: 172.16.238.5
-    ports:
-      - "192.168.178.3:53:53/tcp"
-      - "192.168.178.3:53:53/udp"
-      - "192.168.178.3:80:80/tcp"
-      - "192.168.178.3:443:443/tcp"
-    environment:
-      DNS1: '172.16.238.7'
-      DNS2: 'no'
-      DNSMASQ_LISTENING: 'all'
+        ipv4_address: 172.16.238.4
+    expose:
+      - "5300/udp"
+      - "5300/tcp"
     volumes:
-      - '/etc/private-lan/volumes/pihole/gravity.db:/etc/pihole/gravity.db'
-      - '/etc/private-lan/volumes/pihole/pihole-vpn/:/etc/pihole/'
-      - '/etc/private-lan/volumes/pihole/dnsmasq-vpn/:/etc/dnsmasq.d/'
+      - '/etc/private-lan/volumes/dnscrypt-proxy/:/config/'
+    restart: always
     cap_add:
       - NET_ADMIN
-      - SYS_NICE
-    restart: unless-stopped
-    depends_on:
-      - dhcp-helper
-
-  unbound:
-    build: images/unbound
-    container_name: unbound
-    networks:
-      net:
-        ipv4_address: 172.16.238.6
-    expose:
-      - "53/udp"
-      - "53/tcp"
-    volumes:
-      - '/etc/private-lan/volumes/unbound/unbound.conf:/etc/unbound/unbound.conf'
-    restart: unless-stopped
-
-  unbound-vpn:
-    build: images/unbound
-    container_name: unbound-vpn
-    networks:
-      net:
-        ipv4_address: 172.16.238.7
-    expose:
-      - "53/udp"
-      - "53/tcp"
-    volumes:
-      - '/etc/private-lan/volumes/unbound/unbound.conf:/etc/unbound/unbound.conf'
-    restart: unless-stopped
-    depends_on:
-      - wireguard-gw
 
   dhcp-helper:
     build: images/dhcp-helper
