@@ -42,7 +42,7 @@ services:
       - "192.168.178.2:80:80/tcp"
       - "192.168.178.2:443:443/tcp"
     environment:
-      DNS1: '172.16.238.6'
+      DNS1: '172.16.238.5'
       DNS2: 'no'
       DNSMASQ_LISTENING: 'all'
     volumes:
@@ -55,14 +55,14 @@ services:
     restart: unless-stopped
 
   dnscrypt-proxy:
-    build: files/dnscrypt-proxy
+    build: images/dnscrypt-proxy
     container_name: dnscrypt-proxy
     networks:
       net:
-        ipv4_address: 172.16.238.4
+        ipv4_address: 172.16.238.5
     expose:
-      - "5300/udp"
-      - "5300/tcp"
+      - "53/udp"
+      - "53/tcp"
     volumes:
       - '/etc/private-lan/volumes/dnscrypt-proxy/:/config/'
     restart: always

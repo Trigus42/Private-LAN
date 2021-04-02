@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Name of the interface that connects to your LAN (usually eth0)
-lan_if="eth0"
+# Get default interface with lowest metric
+lan_if="$(ip route | awk 'FNR == 1 {print $(5)}')"
+# Overwrite interface
+#lan_if="eth0"
 
 # Get environment variables
 docker_if="br-$(docker network ls | grep net | cut -d' ' -f1)"
@@ -12,13 +14,11 @@ wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.
 unbound_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound)"
 default_gateway="$(ip route show default dev $lan_if | awk '/default/ { print $3 }')"
 
-# Default route in a new table via the VPN Gateway
+# Default route in a new routing table via the VPN Gateway
 ip route add default via $wireguard_gateway_ip table 200
-# Use new table for all packets
+# Use new table for all packets from eth0
 ip rule add from all iif eth0 lookup 200
-# This rule is created later thus it'S priority is higher than "ip rule add from all lookup table 200".
-# But it will only be used if at least the first bit of an IP range in it is matching the destination IP.
-# It won't match 0.0.0.0/0 ("default")
+# Use main routing table first but only match if at least the first bit of an IP range in it is matching the destination IP. It won't match 0.0.0.0/0 ("default")
 ip rule add from all lookup main suppress_prefixlength 0
 
 # Uncomment if you want the host to use the VPN tunnel too
@@ -34,12 +34,12 @@ if ! $(iptables -C FORWARD -i eth0 -o eth0 -j REJECT &> /dev/null); then
 fi
 
 # Allow forwarding from eth0 trough the docker interface to the Wireguard gateway
-if ! $(iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT &> /dev/null); then
+if ! $(iptables -C FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT &> /dev/null); then
     iptables -I FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT
 fi
 
 # Replace the source IP of packets going out trough the docker interface to the Wireguard container
-if ! $(iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE &> /dev/null); then
+if ! $(iptables -t nat -C POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE &> /dev/null); then
     iptables -t nat -I POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE
 fi
 
