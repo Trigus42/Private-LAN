@@ -6,12 +6,9 @@
 
     $ mkdir -p /etc/private-lan/volumes/{dnscrypt-proxy,pihole/{pihole,dnsmasq},dnsmasq,wireguard-gw}
 
-#### Place files:
+#### Move compose file to /etc/private-lan:
 
-    $ mv /tmp/private-lan/dnscrypt /etc/private-lan
-    $ mv /tmp/private-lan/set-route.sh /etc/private-lan
-    $ mv /etc/private-lan/gateway.sh /etc/init.d/
-    $ mv /tmp/private-lan/gateway.service /etc/systemd/system/
+    $ mv /etc/private-lan/dnscrypt/docker-compose.yml /etc/private-lan/
 
 # Network configuration
 
@@ -20,8 +17,8 @@ Paste this and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf
 
 ```yaml
 interface eth0
-static ip_address=<IP> ##The IP address you want your server to have
-static routers=<IP> ##The IP address of your router
+static ip_address=<IP> ## IP address you want to assign to eth0
+static routers=<IP> ## IP address of your router
 static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 
@@ -36,12 +33,15 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
 
+#### Restart dhcpcd:
+
+    $ systemctl restart dhcpcd
+
 # Setup Docker
 
 #### Install Docker Engine:
 
-    $ curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-    $ sh /tmp/get-docker.sh
+    $ curl -fsSL https://get.docker.com | bash
 
 #### Install Docker Compose:
 
@@ -107,7 +107,7 @@ PresharedKey = ...
 
 Assign permissions and ownership (No one but root should be able to see Private Key and PSK):
 
-    $ chown -R root /etc/private-lan/volumes/wireguard-gw
+    $ chown -R root:root /etc/private-lan/volumes/wireguard-gw
     $ chmod 600 -R /etc/private-lan/volumes/wireguard-gw
 
 # DNSCrypt-Proxy:
@@ -116,7 +116,7 @@ Assign permissions and ownership (No one but root should be able to see Private 
 
 Change in ``/etc/private-lan/volumes/dnscrypt-proxy/dnscrypt-proxy.toml``:
 ```yaml
-listen_addresses = ['0.0.0.0:5300'] 
+listen_addresses = ['0.0.0.0:53'] 
 ```
 <details>
 <summary>Examples for some optional settings</summary>
@@ -145,6 +145,11 @@ routes = [
 </details>
 
 # Setup routing and NAT
+
+```
+$ mv /etc/private-lan/dnscrypt/gateway.sh /etc/init.d/
+$ mv /etc/private-lan/gateway.service /etc/systemd/system/
+```
 
 #### Make the scripts executable
 ```

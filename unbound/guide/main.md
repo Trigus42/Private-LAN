@@ -1,7 +1,7 @@
 # Network configuration
 
 #### VLAN
-Add this to /etc/network/interfaces to create a new VLAN:
+Add this to /etc/network/interfaces to create a new virtual interface:
 
 ```
 auto eth0.1
@@ -14,13 +14,13 @@ Paste this and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf
 
 ```yaml
 interface eth0
-static ip_address=<IP> ##The IP address you want your server to have
-static routers=<IP> ##The IP address of your router
+static ip_address=<IP> ## IP address you want to assign to eth0
+static routers=<IP> ## IP address of your router
 static domain_name_servers=8.8.8.8 1.1.1.1
 
 interface eth0.1
-static ip_address=<IP> ##The IP address you want your second Pi-Hole to have
-static routers=<IP> ##The IP address of your router
+static ip_address=<IP> ## IP address you want to assign to eth0.1
+static routers=<IP> ## IP address of your router
 static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 
@@ -40,12 +40,15 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
 
+#### Restart dhcpcd:
+
+    $ systemctl restart dhcpcd
+
 # Setup Docker
 
 #### Install Docker Engine:
 
-    $ curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
-    $ sh /tmp/get-docker.sh
+    $ curl -fsSL https://get.docker.com | bash
 
 #### Install Docker Compose:
 
@@ -61,13 +64,13 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 
 #### Create volume directories:
 
-    $ mkdir -p /etc/private-lan/volumes/{unbound,pihole/{pihole,pihole-vpn,dnsmasq,dnsmasq-vpn},dnsmasq,wireguard-gw}
+    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,pihole/{gravity,pihole{dnsmasq,pihole},pihole-vpn{dnsmasq,pihole}}}
 
 #### Place files:
 
-    $ mv /tmp/private-lan/unbound /etc/private-lan
-    $ mv /tmp/private-lan/set-route.sh /etc/private-lan
-    $ mv /etc/private-lan/gateway.sh /etc/init.d/
+    $ mv /tmp/private-lan/unbound/docker-compose.yml /etc/private-lan/
+    $ mv /tmp/private-lan/set-route.sh /etc/private-lan/
+    $ mv /etc/private-lan/unbound/gateway.sh /etc/init.d/
     $ mv /tmp/private-lan/gateway.service /etc/systemd/system/
     $ mv /etc/private-lan/unbound.conf /etc/private-lan/volumes/unbound/
 
@@ -105,7 +108,7 @@ Insert the following lines in the Wireguard config file below `[Interface]`:
 ```
 # Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
 PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your subnet (https://unix.stackexchange.com/questions/615255/docker-container-as-network-gateway)
+# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your LAN subnet (https://unix.stackexchange.com/questions/615255/docker-container-as-network-gateway)
 PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add <Your Subnet> via 172.16.238.1
 PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete <Your Subnet> via 172.16.238.1
 ```
