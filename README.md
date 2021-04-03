@@ -14,5 +14,5 @@ If anything is unclear to you, please feel free to ask using 'Discussions'.
 
 - ### [DNSCrypt](dnscrypt/guide/main.md)
 
-- ### [Legacy](bare-metal/guide/main.md)
+- ### [Legacy](legacy/main.md)
   I won't actively work on it anymore but keep it for anyone looking for a reference to maintain their existing setup.
