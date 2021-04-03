@@ -1,3 +1,26 @@
+# Download files:
+
+    $ git clone https://github.com/Trigus42/Private-LAN /etc/private-lan
+
+#### Create volume directories:
+
+    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,pihole/{gravity,pihole/{dnsmasq,pihole},pihole-vpn/{dnsmasq,pihole}}}
+
+#### Move compose file to /etc/private-lan:
+
+    $ mv /etc/private-lan/unbound/docker-compose.yml /etc/private-lan/
+
+#### Edit docker-compose file:
+
+Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/private-lan/docker-compose.yml to match your network environment.
+
+#### Place config files in volume directories:
+
+```
+echo "GRAVITYDB=/etc/pihole/gravity/gravity.db" > /etc/private-lan/volumes/pihole/pihole-FTL.conf
+mv /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
+```
+
 # Network configuration
 
 #### VLAN
@@ -57,27 +80,6 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 #### Enable Docker to start on boot:
 
     $ systemctl enable docker
-
-# Download files:
-
-    $ git clone https://github.com/Trigus42/Private-LAN /tmp/private-lan
-
-#### Create volume directories:
-
-    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,pihole/{gravity,pihole{dnsmasq,pihole},pihole-vpn{dnsmasq,pihole}}}
-
-#### Place files:
-
-    $ mv /tmp/private-lan/unbound/docker-compose.yml /etc/private-lan/
-    $ mv /tmp/private-lan/set-route.sh /etc/private-lan/
-    $ mv /etc/private-lan/unbound/gateway.sh /etc/init.d/
-    $ mv /tmp/private-lan/gateway.service /etc/systemd/system/
-    $ mv /etc/private-lan/unbound.conf /etc/private-lan/volumes/unbound/
-
-
-#### Edit docker-compose file:
-
-Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/private-lan/docker-compose.yml to match your network environment.
 
 
 # Install Wireguard
@@ -141,11 +143,17 @@ Assign permissions and ownership (No one but root should be able to see Private 
 
 # Setup routing and NAT
 
+```
+$ mv /etc/private-lan/unbound/gateway.sh /etc/init.d/
+$ mv /etc/private-lan/gateway.service /etc/systemd/system/
+```
+
 #### Make the scripts executable
 ```
 $ chmod +x /etc/init.d/gateway.sh
 $ chmod +x /etc/private-lan/set-route.sh
 ```
+
 #### Enable as a new service
 ```
 $ systemctl daemon-reload
