@@ -4,11 +4,15 @@
 
 #### Create volume directories:
 
-    $ mkdir -p /etc/private-lan/volumes/{dnscrypt-proxy,pihole/{pihole,dnsmasq},dnsmasq,wireguard-gw}
+    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,pihole/{gravity,pihole/{dnsmasq,pihole}}}
 
 #### Move compose file to /etc/private-lan:
 
     $ mv /etc/private-lan/dnscrypt/docker-compose.yml /etc/private-lan/
+
+#### Edit docker-compose file:
+
+Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/private-lan/docker-compose.yml to match your network environment.
 
 # Network configuration
 
@@ -156,6 +160,7 @@ $ mv /etc/private-lan/gateway.service /etc/systemd/system/
 $ chmod +x /etc/init.d/gateway.sh
 $ chmod +x /etc/private-lan/set-route.sh
 ```
+
 #### Enable as a new service
 ```
 $ systemctl daemon-reload

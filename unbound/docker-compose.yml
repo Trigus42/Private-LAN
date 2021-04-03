@@ -48,8 +48,8 @@ services:
     volumes:
       - '/etc/private-lan/volumes/pihole/gravity/:/etc/pihole/gravity/'
       - '/etc/private-lan/volumes/pihole/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf'
-      - '/etc/private-lan/volumes/pihole/pihole/:/etc/pihole/'
-      - '/etc/private-lan/volumes/pihole/dnsmasq/:/etc/dnsmasq.d/'
+      - '/etc/private-lan/volumes/pihole/pihole/pihole/:/etc/pihole/'
+      - '/etc/private-lan/volumes/pihole/pihole/dnsmasq/:/etc/dnsmasq.d/'
     cap_add:
       - NET_ADMIN
       - SYS_NICE
@@ -73,8 +73,8 @@ services:
     volumes:
       - '/etc/private-lan/volumes/pihole/gravity/:/etc/pihole/gravity/'
       - '/etc/private-lan/volumes/pihole/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf'
-      - '/etc/private-lan/volumes/pihole/pihole-vpn/:/etc/pihole/'
-      - '/etc/private-lan/volumes/pihole/dnsmasq-vpn/:/etc/dnsmasq.d/'
+      - '/etc/private-lan/volumes/pihole/pihole-vpn/pihole/:/etc/pihole/'
+      - '/etc/private-lan/volumes/pihole/pihole-vpn/dnsmasq/:/etc/dnsmasq.d/'
     cap_add:
       - NET_ADMIN
       - SYS_NICE
