@@ -18,4 +18,4 @@ If anything is unclear to you, please feel free to ask using 'Discussions'.
   I won't actively work on it anymore but keep it for anyone looking for a reference to maintain their existing setup.
 
 ## Tags
-I will create a new tag with a incremented major version number when making changes that could break existing setups.
+I will create a new tag with an incremented major version number when making changes that could break existing setups.
