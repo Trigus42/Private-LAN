@@ -1,0 +1,93 @@
+version: "3.8"
+
+services:
+  wireguard-gw:
+    image: linuxserver/wireguard
+    container_name: wireguard-gw
+    volumes:
+    - '/etc/private-lan/volumes/wireguard-gw/:/config'
+    networks:
+      net:
+        ipv4_address: 172.16.238.2
+    restart: unless-stopped
+    privileged: true
+    cap_add:
+    - NET_ADMIN
+    - SYS_MODULE
+
+  dnsmasq:
+    build: images/dnsmasq
+    container_name: dnsmasq
+    networks:
+      net:
+        ipv4_address: 172.16.238.3
+    expose:
+      - "67/udp"
+      - "68/tcp"
+    volumes:
+      - '/etc/private-lan/volumes/dnsmasq/:/etc/dnsmasq.d/'
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    networks:
+      net:
+        ipv4_address: 172.16.238.4
+    ports:
+      - "192.168.178.2:53:53/tcp"
+      - "192.168.178.2:53:53/udp"
+      - "192.168.178.2:80:80/tcp"
+      - "192.168.178.2:443:443/tcp"
+    environment:
+      DNS1: '172.16.238.5'
+      DNS2: 'no'
+      DNSMASQ_LISTENING: 'all'
+    volumes:
+      - '/etc/private-lan/volumes/pihole/gravity/:/etc/pihole/gravity/'
+      - '/etc/private-lan/volumes/pihole/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf'
+      - '/etc/private-lan/volumes/pihole/pihole/pihole/:/etc/pihole/'
+      - '/etc/private-lan/volumes/pihole/pihole/dnsmasq/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+    restart: unless-stopped
+
+  dnscrypt-proxy:
+    build: images/dnscrypt-proxy
+    container_name: dnscrypt-proxy
+    networks:
+      net:
+        ipv4_address: 172.16.238.5
+    expose:
+      - "53/udp"
+      - "53/tcp"
+    volumes:
+      - '/etc/private-lan/volumes/dnscrypt-proxy/:/config/'
+    restart: always
+    cap_add:
+      - NET_ADMIN
+
+  dhcp-helper:
+    build: images/dhcp-helper
+    container_name: dhcp-helper
+    restart: unless-stopped
+    network_mode: "host"
+    command: -s 172.16.238.3
+    cap_add:
+      - NET_ADMIN
+
+networks:
+  net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.238.0/24
+        gateway: 172.16.238.1
+      - subnet: 2001:3984:3989::/64
+        gateway: 2001:3984:3989::1
