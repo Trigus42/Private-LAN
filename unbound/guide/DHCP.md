@@ -16,14 +16,12 @@ dhcp-option-force=3,192.168.178.2
 dhcp-option-force=6,192.168.178.3,192.168.178.3
 
 ## Known devices (static IP address) default ##
-# Devices in the IP range .20 - 199 are assigned to tag 0
+# Devices in the IP range .20 - .199 are assigned tag '0'
 dhcp-range=set:0,192.168.178.20,192.168.178.199,24h
-# Gateway for tag 0
 dhcp-option-force=tag:0,3,192.168.178.1
-# DNS1 and DNS2 for tag 0
 dhcp-option-force=tag:0,6,192.168.178.2,192.168.178.2
 
-## Settings for devices which were assigned the 'VPN' tag to ##
+## Settings for devices which were assigned the 'VPN' tag ##
 dhcp-option-force=tag:VPN,3,192.168.178.2
 dhcp-option-force=tag:VPN,6,192.168.178.3,192.168.178.3
 
@@ -43,7 +41,7 @@ dhcp-host=81:7d:22:a2:3e:7d,192.168.178.20,PC-VPN,set:VPN
 dhcp-host=81:7d:22:a2:3e:7e,192.168.178.21,PC
 ```
 
-#### Restart Pi-Hole
+#### Restart dnsmasq
 
     $ docker restart dnsmasq
 
