@@ -16,7 +16,7 @@ dhcp-option-force=3,192.168.178.2
 dhcp-option-force=6,192.168.178.3,192.168.178.3
 
 ## Known devices (static IP address) default ##
-# Devices in the IP range .20 - .199 are assigned tag '0'
+# Devices in the IP range .20 - .199 are assigned to tag '0'
 dhcp-range=set:0,192.168.178.20,192.168.178.199,24h
 dhcp-option-force=tag:0,3,192.168.178.1
 dhcp-option-force=tag:0,6,192.168.178.2,192.168.178.2
