@@ -17,8 +17,8 @@ Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/
 #### Place config files in volume directories:
 
 ```
-echo "GRAVITYDB=/etc/pihole/gravity/gravity.db" > /etc/private-lan/volumes/pihole/pihole-FTL.conf
-mv /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
+$ echo "GRAVITYDB=/etc/pihole/gravity/gravity.db" > /etc/private-lan/volumes/pihole/pihole-FTL.conf
+$ mv /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
 ```
 
 # Network configuration
@@ -212,8 +212,19 @@ Load these changes:
 
 #### Client setup
 
-You can now manually configure your server as network gateway and DNS server.  
-However it's much more convenient to set up a DHCP server.
+You can now manually configure your server as network gateway and DNS server in individual devices.  
+However, it's much more convenient to set up a DHCP server.  
+
+Using the IPs from the example network environment in /etc/private-lan/docker-compose.yml, you would configure the devices as follows:
+
+VPN:  
+Gateway: `192.168.178.2` (or `192.168.178.3`)  
+DNS: `192.168.178.3`
+
+Direct:  
+Gateway: `192.168.178.1`  
+DNS: `192.168.178.2`
+
 
 # Optional
 
