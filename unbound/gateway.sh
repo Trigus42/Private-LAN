@@ -6,7 +6,7 @@ lan_if="$(ip route | awk 'FNR == 1 {print $(5)}')"
 #lan_if="eth0"
 
 # Get environment variables
-docker_if="br-$(docker network ls | grep net | cut -d' ' -f1)"
+docker_if="br-$(docker network ls | grep private-lan_net | cut -d' ' -f1)"
 docker_if_ip="$(ip -4 addr show $docker_if | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
 docker_if_subnet="$(ip -o -f inet addr show $docker_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 lan_subnet="$(ip -o -f inet addr show $lan_if | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
