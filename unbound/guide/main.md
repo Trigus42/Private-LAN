@@ -63,8 +63,9 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
 
-#### Restart dhcpcd:
+#### Apply network changes:
 
+    $ systemctl restart networking
     $ systemctl restart dhcpcd
 
 # Setup Docker
@@ -205,6 +206,11 @@ Load these changes:
 
     $ docker-compose -f /etc/private-lan/docker-compose.yml up -d
     $ systemctl start gateway.service
+
+#### Change gravity.db volume permissions
+
+    $ chown 999:spi -R /etc/private-lan/volumes/pihole/gravity
+    $ chmod 774 -R /etc/private-lan/volumes/pihole/gravity
 
 #### Set the Pi-Hole web interface password
 

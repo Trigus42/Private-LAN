@@ -37,8 +37,9 @@ static domain_name_servers=8.8.8.8 1.1.1.1
 ``` 
 </details>
 
-#### Restart dhcpcd:
+#### Apply network changes:
 
+    $ systemctl restart networking
     $ systemctl restart dhcpcd
 
 # Setup Docker

@@ -29,6 +29,8 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
+      depends_on:
+        - dhcp-helper
 
   pihole:
     image: pihole/pihole:latest
@@ -54,6 +56,8 @@ services:
       - NET_ADMIN
       - SYS_NICE
     restart: unless-stopped
+    depends_on:
+      - unbound
 
   pihole-vpn:
     image: pihole/pihole:latest
@@ -80,7 +84,8 @@ services:
       - SYS_NICE
     restart: unless-stopped
     depends_on:
-      - dhcp-helper
+      - wireguard-gw
+      - unbound-vpn
 
   unbound:
     build: images/unbound
