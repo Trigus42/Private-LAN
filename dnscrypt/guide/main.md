@@ -225,6 +225,6 @@ However it's much more convenient to simply activate the DHCP server build into 
 
 # Optional
 
-- ### [DHCP server](DHCP.md)
-- ### [PiVPN](PiVPN.md)
-- ### [Updating](update.md)
+- ### [DHCP server](./DHCP.md)
+- ### [PiVPN](/guide/PiVPN.md)
+- ### [Updating](/guide/update.md)

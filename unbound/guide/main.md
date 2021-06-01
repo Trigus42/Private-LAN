@@ -234,6 +234,6 @@ DNS: `192.168.178.2`
 
 # Optional
 
-- ### [DHCP server](DHCP.md)
-- ### [PiVPN](PiVPN.md)
-- ### [Updating](update.md)
+- ### [DHCP server](./DHCP.md)
+- ### [PiVPN](/guide/PiVPN.md)
+- ### [Updating](/guide/update.md)
