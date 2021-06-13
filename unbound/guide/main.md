@@ -23,50 +23,33 @@ $ mv /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
 
 # Network configuration
 
-#### VLAN
-Add this to /etc/network/interfaces to create a new virtual interface:
+Add this to /etc/network/interfaces to create a new virtual interface and set a static IP:
 
 ```
+auto eth0
+allow-hotplug eth0
+iface eth0 inet static
+address 192.168.178.2
+netmask 255.255.255.0
+gateway 192.168.178.1
+dns-nameservers 8.8.8.8 1.1.1.1
+dns-search domain-name
+
 auto eth0.1
-iface eth0.1 inet manual
+allow-hotplug eth0.1
+iface eth0.1 inet static
+address 192.168.178.3
+netmask 255.255.255.0
 vlan-raw-device eth0
 ```
 
-#### Static Interface configuration:
-Paste this and overwrite any existing configuration for eth0 in /etc/dhcpcd.conf: 
+#### Disable DHCP:
 
-```yaml
-interface eth0
-static ip_address=<IP> ## IP address you want to assign to eth0
-static routers=<IP> ## IP address of your router
-static domain_name_servers=8.8.8.8 1.1.1.1
-
-interface eth0.1
-static ip_address=<IP> ## IP address you want to assign to eth0.1
-static routers=<IP> ## IP address of your router
-static domain_name_servers=8.8.8.8 1.1.1.1
-``` 
-
-<details>
-<summary>Example</summary>
-
-```yaml
-interface eth0
-static ip_address=192.168.178.2
-static routers=192.168.178.1
-static domain_name_servers=8.8.8.8 1.1.1.1
-
-interface eth0.1
-static ip_address=192.168.178.3
-static routers=192.168.178.1
-static domain_name_servers=8.8.8.8 1.1.1.1
-``` 
-</details>
+    $ systemctl disable dhcpcd
 
 #### Apply network changes:
 
-    $ systemctl restart networking
-    $ systemctl restart dhcpcd
+    $ systemctl restart networking.service
 
 # Setup Docker
 
