@@ -81,7 +81,7 @@ On Rapberry PI OS run:
 
 On any standard Debian installation run:
 
-    $ apt install linux-headers-$(uname -r) wireguard -y
+    $ apt install linux-headers wireguard -y
 
 #### If you are on Bullseye or higher run:
 
