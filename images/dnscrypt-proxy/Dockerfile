@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3
 
 RUN apk -U upgrade; \
     apk add --no-cache dnscrypt-proxy bind-tools; \
