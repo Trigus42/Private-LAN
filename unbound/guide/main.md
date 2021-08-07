@@ -89,15 +89,17 @@ On any standard Debian installation run:
 
 #### Wireguard config
 
-Download your config file and place it in ```/etc/private-lan/volumes/wireguard-gw``` as ```wg0.conf```.  
-Insert the following lines in the Wireguard config file below `[Interface]`:
+Download your config file(s) and insert the following lines in the Wireguard config file below `[Interface]`:  
+
 ```
 # Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
 PreUp = iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your LAN subnet (https://unix.stackexchange.com/questions/615255/docker-container-as-network-gateway)
+# Replace the source IP of packets going out trough the Wireguard interface AND add a route to your LAN subnet
 PostUp = iptables -t nat -A POSTROUTING -o  %i -j MASQUERADE && ip route add <Your Subnet> via 172.16.238.1
 PostDown = iptables -t nat -D POSTROUTING -o  %i -j MASQUERADE && ip route delete <Your Subnet> via 172.16.238.1
 ```
+
+Copy it to ```/etc/private-lan/volumes/wireguard-gw``` and ```/etc/private-lan/volumes/wireguard-dns``` as ```wg0.conf```.  
 
 <details>
 <summary>Example</summary>

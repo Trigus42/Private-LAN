@@ -15,6 +15,20 @@ services:
     - NET_ADMIN
     - SYS_MODULE
 
+  wireguard-dns:
+    image: linuxserver/wireguard
+    container_name: wireguard-dns
+    volumes:
+    - '/etc/private-lan/volumes/wireguard-dns/:/config'
+    networks:
+      net:
+        ipv4_address: 172.16.238.8
+    restart: unless-stopped
+    privileged: true
+    cap_add:
+    - NET_ADMIN
+    - SYS_MODULE
+
   dnsmasq:
     build: images/dnsmasq
     container_name: dnsmasq
@@ -99,6 +113,8 @@ services:
     volumes:
       - '/etc/private-lan/volumes/unbound/unbound.conf:/etc/unbound/unbound.conf'
     restart: unless-stopped
+    depends_on:
+      - wireguard-dns
 
   unbound-vpn:
     build: images/unbound

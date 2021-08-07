@@ -11,7 +11,7 @@ docker_if_ip="$(ip -4 addr show "$docker_if" | grep -oP '(?<=inet\s)\d+(\.\d+){3
 docker_if_subnet="$(ip -o -f inet addr show "$docker_if" | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 lan_subnet="$(ip -o -f inet addr show "$lan_if" | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gw)"
-wireguard_dns_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gw)"
+wireguard_dns_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-dns)"
 unbound_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' unbound)"
 default_gateway="$(ip route show default dev "$lan_if" | awk '/default/ { print $3 }')"
 
@@ -41,19 +41,22 @@ fi
 if ! eval "iptables -t nat -C POSTROUTING ! -s $docker_if_subnet -d $wireguard_gateway_ip -o $docker_if -j MASQUERADE &> /dev/null"; then
     iptables -t nat -I POSTROUTING ! -s "$docker_if_subnet" -d "$wireguard_gateway_ip" -o "$docker_if" -j MASQUERADE
 fi
+
 # Wait until the pihole and pihole-vpn container finished start up
 until eval "/usr/bin/docker inspect -f {{.State.Running}} pihole" && eval "/usr/bin/docker inspect -f {{.State.Running}} pihole-vpn"; do
     sleep 0.1;
 done;
 
-# Set the default route of the "pihole-vpn" container to the "wireguard_gateway" container and add an exception for packets addressed to the LAN or Wireguard clients
+# Set the default route of the containers to the "wireguard-gw" container and add an exception for packets addressed to the LAN or Wireguard clients
 bash /etc/private-lan/set-route.sh pihole-vpn "$wireguard_gateway_ip" "$docker_if_ip" "$lan_subnet" 10.6.0.0/24
-
-# Set the default route of the "unbound-vpn" container to the "wireguard_gateway" container and add an exception for packets addressed to the LAN or Wireguard clients
 bash /etc/private-lan/set-route.sh unbound-vpn "$wireguard_gateway_ip" "$docker_if_ip" "$lan_subnet" 10.6.0.0/24
-
-# Reconfigure the routing table each time the container "pihole-vpn" is restarted 
+# Reconfigure the routing table each time one of the containers are restarted 
 docker events --filter "container=pihole-vpn" | awk '/container start/ { system("/etc/private-lan/set-route.sh pihole-vpn '"$wireguard_gateway_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }' &
-
-# Reconfigure the routing table each time the container "unbound-vpn" is restarted 
 docker events --filter "container=unbound-vpn" | awk '/container start/ { system("/etc/private-lan/set-route.sh unbound-vpn '"$wireguard_gateway_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }' &
+
+# Set the default route of the containers to the "wireguard-dns" container and add an exception for packets addressed to the LAN or Wireguard clients
+bash /etc/private-lan/set-route.sh pihole "$wireguard_dns_ip" "$docker_if_ip" "$lan_subnet" 10.6.0.0/24
+bash /etc/private-lan/set-route.sh unbound "$wireguard_dns_ip" "$docker_if_ip" "$lan_subnet" 10.6.0.0/24
+# Reconfigure the routing table each time one of the containers are restarted
+docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/set-route.sh unbound '"$wireguard_dns_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }' &
+docker events --filter "container=unbound" | awk '/container start/ { system("/etc/private-lan/set-route.sh unbound '"$wireguard_dns_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }' &
