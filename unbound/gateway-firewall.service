@@ -1,0 +1,9 @@
+[Unit]
+Description=Set firewall rules before docker startup
+Before=docker.service
+
+[Service]
+ExecStart=/etc/init.d/gateway-firewall.sh
+
+[Install]
+WantedBy=default.target
