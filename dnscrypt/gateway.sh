@@ -11,12 +11,12 @@ docker_if_ip="$(ip -4 addr show "$docker_if" | grep -oP '(?<=inet\s)\d+(\.\d+){3
 docker_if_subnet="$(ip -o -f inet addr show "$docker_if" | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 lan_subnet="$(ip -o -f inet addr show "$lan_if" | awk '/scope global/ {print $4}' | perl -ne 's/(?<=\d.)\d{1,3}(?=\/)/0/g; print;')"
 wireguard_gateway_ip="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' wireguard-gw)"
-default_gateway="$(ip route show default dev "$lan_if" | awk '/default/ { print $3 }')"
+#default_gateway="$(ip route show default dev "$lan_if" | awk '/default/ { print $3 }')"
 
 # Default route in a new routing table via the VPN Gateway
 ip route add default via "$wireguard_gateway_ip" table 200
-# Use new table for all packets from eth0
-ip rule add from all iif eth0 lookup 200
+# Use new table for all packets from lan_if
+ip rule add from all iif "$lan_if" lookup 200
 # Use main routing table first but only match if at least the first bit of an IP range in it is matching the destination IP. It won't match 0.0.0.0/0 ("default")
 ip rule add from all lookup main suppress_prefixlength 0
 
@@ -26,14 +26,9 @@ ip rule add from all lookup main suppress_prefixlength 0
 # ip rule add from $wireguard_gateway_ip lookup 201
 # ip route replace default via $wireguard_gateway_ip
 
-# Don't allow forwarding from eth0 to eth0 (bypassing the VPN gateway)
-if ! eval "iptables -C FORWARD -i eth0 -o eth0 -j REJECT &> /dev/null"; then
-    iptables -I FORWARD -i eth0 -o eth0 -j REJECT
-fi
-
-# Allow forwarding from eth0 trough the docker interface to the Wireguard gateway
-if ! eval "iptables -C FORWARD -i eth0 -o $docker_if -d $wireguard_gateway_ip -j ACCEPT &> /dev/null"; then
-    iptables -I FORWARD -i eth0 -o "$docker_if" -d "$wireguard_gateway_ip" -j ACCEPT
+# Allow forwarding from lan_if trough the docker interface to the Wireguard gateway
+if ! eval "iptables -C FORWARD -i "$lan_if" -o $docker_if -d $wireguard_gateway_ip -j ACCEPT &> /dev/null"; then
+    iptables -I FORWARD -i "$lan_if" -o "$docker_if" -d "$wireguard_gateway_ip" -j ACCEPT
 fi
 
 # Replace the source IP of packets going out trough the docker interface to the Wireguard container
@@ -42,7 +37,7 @@ if ! eval "iptables -t nat -C POSTROUTING ! -s $docker_if_subnet -d $wireguard_g
 fi
 
 # Wait until the pihole container finished start up
-until eval "/usr/bin/docker inspect -f {{.State.Running}} pihole)"; do
+until eval "/usr/bin/docker inspect -f {{.State.Running}} pihole"; do
     sleep 0.1;
 done;
 

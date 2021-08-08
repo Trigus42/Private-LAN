@@ -130,13 +130,13 @@ Assign permissions and ownership (No one but root should be able to see Private 
 # Setup routing and NAT
 
 ```
-$ mv /etc/private-lan/unbound/gateway.sh /etc/init.d/
-$ mv /etc/private-lan/gateway.service /etc/systemd/system/
+$ mv /etc/private-lan/unbound/gateway*.sh /etc/init.d/
+$ mv /etc/private-lan/gateway*.service /etc/systemd/system/
 ```
 
 #### Make the scripts executable
 ```
-$ chmod +x /etc/init.d/gateway.sh
+$ chmod +x /etc/init.d/gateway*.sh
 $ chmod +x /etc/private-lan/set-route.sh
 ```
 
@@ -144,6 +144,7 @@ $ chmod +x /etc/private-lan/set-route.sh
 ```
 $ systemctl daemon-reload
 $ systemctl enable gateway.service
+$ systemctl enable gateway-firewall.service
 ```
 
 #### Edit kernel parameters to enable IP forwarding and enhance security:
@@ -187,8 +188,9 @@ Load these changes:
 [Source packet routing](https://www.ccexpert.us/basic-security-services/disable-ip-source-routing.html)  
 [SYN attacks](https://www.symantec.com/connect/articles/hardening-tcpip-stack-syn-attacks)*
 
-# Start everything up
+# Start everything up (or reboot)
 
+    $ systemctl start gateway-firewall.service
     $ docker-compose -f /etc/private-lan/docker-compose.yml up -d
     $ systemctl start gateway.service
 
