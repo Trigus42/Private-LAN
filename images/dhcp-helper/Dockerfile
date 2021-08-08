@@ -1,7 +1,7 @@
-FROM alpine:3.12
+FROM alpine:3.14
 
-RUN apk -U upgrade; \
-    apk add dhcp-helper; \
+RUN apk update; \
+    apk add --no-cache dhcp-helper; \
     # clean up
     rm -rf /var/cache/apk/* /tmp/*    
 
