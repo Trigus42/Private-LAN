@@ -1,7 +1,7 @@
-FROM alpine:3.12
+FROM alpine:3.14
 
-RUN apk -U upgrade; \
-    apk add --update --no-cache bash ca-certificates bind-tools wget unbound
+RUN apk update; \
+    apk add --no-cache bash ca-certificates bind-tools wget unbound
 
 RUN chown -R unbound:unbound /usr/share/dnssec-root/; \
     chmod -R 744 /usr/share/dnssec-root/; \
