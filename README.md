@@ -8,9 +8,9 @@ You might have to change some names and addresses. Depending on your environment
 
 ## Variants
 
-- ### [Unbound](unbound/guide/main.md)
+- ### [Unbound](unbound/guide/main.md) [(Network diagram)](unbound/guide/diagram.md)
 
-- ### [DNSCrypt](dnscrypt/guide/main.md)
+- ### [DNSCrypt](dnscrypt/guide/main.md) [(Network diagram)](dnscrypt/guide/diagram.md)
 
 - ### [Legacy](legacy/main.md)
   I won't actively work on it anymore but keep it for anyone looking for a reference to maintain their existing setup.
