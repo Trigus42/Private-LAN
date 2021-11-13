@@ -43,8 +43,8 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
-      depends_on:
-        - dhcp-helper
+    depends_on:
+      - dhcp-helper
 
   pihole:
     image: pihole/pihole:latest
@@ -62,8 +62,6 @@ services:
       DNS2: 'no'
       DNSMASQ_LISTENING: 'all'
     volumes:
-      - '/etc/private-lan/volumes/pihole/gravity/:/etc/pihole/gravity/'
-      - '/etc/private-lan/volumes/pihole/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf'
       - '/etc/private-lan/volumes/pihole/pihole/pihole/:/etc/pihole/'
       - '/etc/private-lan/volumes/pihole/pihole/dnsmasq/:/etc/dnsmasq.d/'
     cap_add:
@@ -89,8 +87,6 @@ services:
       DNS2: 'no'
       DNSMASQ_LISTENING: 'all'
     volumes:
-      - '/etc/private-lan/volumes/pihole/gravity/:/etc/pihole/gravity/'
-      - '/etc/private-lan/volumes/pihole/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf'
       - '/etc/private-lan/volumes/pihole/pihole-vpn/pihole/:/etc/pihole/'
       - '/etc/private-lan/volumes/pihole/pihole-vpn/dnsmasq/:/etc/dnsmasq.d/'
     cap_add:

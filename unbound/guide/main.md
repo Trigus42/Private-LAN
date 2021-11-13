@@ -4,7 +4,7 @@
 
 #### Create volume directories:
 
-    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,pihole/{gravity,pihole/{dnsmasq,pihole},pihole-vpn/{dnsmasq,pihole}}}
+    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,wireguard-dns,pihole/{gravity,pihole/{dnsmasq,pihole},pihole-vpn/{dnsmasq,pihole}}}
 
 #### Move compose file to /etc/private-lan:
 
@@ -17,8 +17,7 @@ Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/
 #### Place config files in volume directories:
 
 ```
-$ echo "GRAVITYDB=/etc/pihole/gravity/gravity.db" > /etc/private-lan/volumes/pihole/pihole-FTL.conf
-$ mv /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
+$ cp /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
 ```
 
 # Network configuration
@@ -130,8 +129,9 @@ Assign permissions and ownership (No one but root should be able to see Private 
 # Setup routing and NAT
 
 ```
-$ mv /etc/private-lan/unbound/gateway*.sh /etc/init.d/
-$ mv /etc/private-lan/gateway*.service /etc/systemd/system/
+$ cp /etc/private-lan/unbound/gateway*.sh /etc/init.d/
+$ cp /etc/private-lan/unbound/gateway*.service /etc/systemd/system/
+$ cp /etc/private-lan/gateway*.service /etc/systemd/system/
 ```
 
 #### Make the scripts executable
