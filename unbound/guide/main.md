@@ -4,7 +4,7 @@
 
 #### Create volume directories:
 
-    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,wireguard-dns,pihole/{gravity,pihole/{dnsmasq,pihole},pihole-vpn/{dnsmasq,pihole}}}
+    $ mkdir -p /etc/private-lan/volumes/{unbound,dnsmasq,wireguard-gw,wireguard-dns,pihole,pihole-vpn}
 
 #### Move compose file to /etc/private-lan:
 
@@ -17,6 +17,7 @@ Edit the IPs in the port section of the pihole and pihole-vpn container in /etc/
 #### Place config files in volume directories:
 
 ```
+$ echo "GRAVITYDB=/etc/pihole/gravity/gravity.db" | tee /etc/private-lan/volumes/pihole/pihole-FTL.conf /etc/private-lan/volumes/pihole-vpn/pihole-FTL.conf
 $ cp /etc/private-lan/unbound/unbound.conf /etc/private-lan/volumes/unbound/
 ```
 
