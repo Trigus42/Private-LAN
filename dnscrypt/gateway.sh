@@ -45,4 +45,4 @@ done;
 bash /etc/private-lan/set-route.sh pihole "$wireguard_gateway_ip" "$docker_if_ip" "$lan_subnet" 10.6.0.0/24
 
 # Reconfigure the routing table each time the container "pihole" is restarted 
-docker events --filter "container=pihole" | awk '/container start/ { system("/etc/private-lan/set-route.sh pihole '"$wireguard_gateway_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }'
+docker events --filter "container=pihole" | awk '/container (start|restart)/ { system("/etc/private-lan/set-route.sh pihole '"$wireguard_gateway_ip"' '"$docker_if_ip"' '"$lan_subnet"' 10.6.0.0/24") }'
